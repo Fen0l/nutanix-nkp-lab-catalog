@@ -1,0 +1,51 @@
+schema: catalog.nkp.nutanix.com/v1/application-user-inputs
+# Declarative input form shown by the NKP UI when enabling the application (NKP 2.18+).
+# policy-reporter's web UI needs its own hostname (no sub-path support upstream). The form asks for the
+# cluster's ingress domain and serves the UI at policy-reporter.<domain> on the NKP Traefik, rendering the chart
+# overrides and the NKP dashboard card.
+groups:
+  - name: exposure
+    label: Web UI
+    description: >-
+      Expose the Policy Reporter on the cluster's NKP ingress (Traefik) as policy-reporter.<ingress domain>.
+      Use the cluster's ingress domain (for example nkp.example.com) with a wildcard DNS
+      record *.<domain> pointing at the Traefik address, or <traefik-ip>.nip.io when no DNS is available.
+    collapse: false
+    fields:
+      - name: ingressDomain
+        label: Ingress domain
+        type: string
+        description: Cluster ingress domain; the UI is served at policy-reporter.<domain> (needs *.<domain> -> Traefik).
+        required: true
+        default: ""
+resources:
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: policy-reporter-config-overrides
+      data:
+        values.yaml: |
+          ui:
+            ingress:
+              enabled: true
+              className: kommander-traefik
+              annotations:
+                traefik.ingress.kubernetes.io/router.tls: "true"
+              hosts:
+                - host: policy-reporter.{{ ingressDomain }}
+                  paths:
+                    - path: /
+                      pathType: Prefix
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: policy-reporter-app-dashboard-info
+        labels:
+          kommander.d2iq.io/application: policy-reporter
+      data:
+        name: Policy Reporter
+        dashboardLink: https://policy-reporter.{{ ingressDomain }}/
+        docsLink: https://kyverno.github.io/policy-reporter/
+        version: "3.11.0"

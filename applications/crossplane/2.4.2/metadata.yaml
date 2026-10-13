@@ -1,0 +1,55 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Crossplane
+description: >-
+  Control-plane framework (CNCF): manage cloud and on-prem resources as Kubernetes objects and compose
+  your own platform APIs. Installs into namespace crossplane-system. No web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - infrastructure
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://docs.crossplane.io/
+dependencies: []
+overview: |
+  ## Crossplane
+
+  Crossplane (CNCF) turns Kubernetes into a universal control plane: install providers (AWS,
+  Azure, GCP, Nutanix community provider, Kubernetes, Helm...), define `Composition`s and
+  offer self-service APIs (`CompositeResourceDefinition`) to developers.
+
+  **At a glance**
+  - Chart: `crossplane` 2.4.2, mirrored unchanged from https://charts.crossplane.io/stable to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/crossplane`
+  - Installs into: namespace `crossplane-system`, one instance per cluster
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: crossplane-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Installed once per cluster into
+  `crossplane-system`. Providers are installed afterwards as `Provider` resources.
+
+  **Example**
+  ```yaml
+  apiVersion: pkg.crossplane.io/v1
+  kind: Provider
+  metadata: { name: provider-kubernetes }
+  spec: { package: xpkg.crossplane.io/crossplane-contrib/provider-kubernetes:v1.0.0 }
+  ```
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://charts.crossplane.io/stable); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://docs.crossplane.io/) · [Marketplace](https://marketplace.upbound.io/) · [Chart](https://github.com/crossplane/crossplane/tree/main/cluster/charts/crossplane) · [Default values](https://github.com/crossplane/crossplane/blob/main/cluster/charts/crossplane/values.yaml) · [Releases](https://github.com/crossplane/crossplane/releases)
+icon: PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgOTAwIDkwMCI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOm5vbmU7fS5jbHMtMntjbGlwLXBhdGg6dXJsKCNjbGlwLXBhdGgpO30uY2xzLTN7ZmlsbDojZjdkMTg2O30uY2xzLTR7Y2xpcC1wYXRoOnVybCgjY2xpcC1wYXRoLTIpO30uY2xzLTV7aXNvbGF0aW9uOmlzb2xhdGU7fS5jbHMtNntjbGlwLXBhdGg6dXJsKCNjbGlwLXBhdGgtMyk7fS5jbHMtN3tjbGlwLXBhdGg6dXJsKCNjbGlwLXBhdGgtNCk7fS5jbHMtOHtjbGlwLXBhdGg6dXJsKCNjbGlwLXBhdGgtNSk7fS5jbHMtOXtmaWxsOiNmZmNkM2M7fS5jbHMtMTB7Y2xpcC1wYXRoOnVybCgjY2xpcC1wYXRoLTcpO30uY2xzLTExe2NsaXAtcGF0aDp1cmwoI2NsaXAtcGF0aC04KTt9LmNscy0xMntmaWxsOiNmMzgwN2I7fS5jbHMtMTN7Y2xpcC1wYXRoOnVybCgjY2xpcC1wYXRoLTExKTt9LmNscy0xNHtjbGlwLXBhdGg6dXJsKCNjbGlwLXBhdGgtMTIpO30uY2xzLTE1e2ZpbGw6IzM1ZDBiYTt9LmNscy0xNntjbGlwLXBhdGg6dXJsKCNjbGlwLXBhdGgtMTQpO30uY2xzLTE3e2ZpbGw6I2Q4YWU2NDt9PC9zdHlsZT48Y2xpcFBhdGggaWQ9ImNsaXAtcGF0aCI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDQ3LjczLDMwOS43OGE0Ni43NTk4MSw0Ni43NTk4MSwwLDAsMC00Ni43Niw0Ni43NlY3OTYuNThhNDYuNzYsNDYuNzYsMCwwLDAsOTMuNTIsMFYzNTYuNTVhNDYuNzU1NTUsNDYuNzU1NTUsMCwwLDAtNDYuNzYtNDYuNzciLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2xpcC1wYXRoLTIiPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI2My42MiwyMzQuNTRxLS4xOTUsNC4zMDUtLjIsOC42OGMwLDMuMTkuMDcsNi4zNS4yNCw5LjUtLjA3LDEuNTUtLjI0LDMuMDgtLjI0LDQuNjZWNTYzLjU2YzAsNTguNTUsNDcuOTEsMTA2LjQ2LDEwNi40NiwxMDYuNDZINTMwLjFjNTguNTYsMCwxMDYuNDYtNDcuOTEsMTA2LjQ2LTEwNi40NlYyNTcuMzdjMC0xLjc4LS4xOC0zLjUxLS4yOC01LjI2LjE0LTIuOTUuMjItNS45Mi4yMi04Ljg5LDAtMi45Mi0uMDctNS44LS4yLTguNjhDNjMxLjgsMTM1LjUzLDU1MC4xLDU2LjY2LDQ0OS45OCw1Ni42NiwzNDkuODUsNTYuNjYsMjY4LjE0LDEzNS41MywyNjMuNjIsMjM0LjU0WiIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSJjbGlwLXBhdGgtMyI+PHJlY3QgY2xhc3M9ImNscy0xIiB4PSIxNDIuMzIwMDEiIHk9Ijk3LjA1IiB3aWR0aD0iNjA2LjEwOTk5IiBoZWlnaHQ9IjYwNi4xMDk5NyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSJjbGlwLXBhdGgtNCI+PHJlY3QgY2xhc3M9ImNscy0xIiB4PSIxMjEuNDUxNjciIHk9IjMwNS42OTEyIiB3aWR0aD0iNjU0LjM3MzcyIiBoZWlnaHQ9IjE5NS41MTgxNCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE1My44NzkyNCA0MzUuNDAzMikgcm90YXRlKC00NSkiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2xpcC1wYXRoLTUiPjxyZWN0IGNsYXNzPSJjbHMtMSIgeD0iMjYwLjkxIiB5PSI1MC45Mjk5NyIgd2lkdGg9IjM4Mi4xMTAwMiIgaGVpZ2h0PSI2MTkuMjg5OTciLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2xpcC1wYXRoLTciPjxyZWN0IGNsYXNzPSJjbHMtMSIgeD0iLTIyLjM4IiB5PSItNjcuNjYiIHdpZHRoPSI2MzkuMDQ5OTgiIGhlaWdodD0iNjM5LjA1MDAyIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImNsaXAtcGF0aC04Ij48cmVjdCBjbGFzcz0iY2xzLTEiIHg9Ii0zMi45NTA0NCIgeT0iMTI4LjM4NDMiIHdpZHRoPSI2NTQuMzgzNyIgaGVpZ2h0PSIyNDEuMTc3NjciIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04OS44NjkyOCAyODAuOTgyNjQpIHJvdGF0ZSgtNDUpIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImNsaXAtcGF0aC0xMSI+PHJlY3QgY2xhc3M9ImNscy0xIiB4PSIyODAuNjcwMDEiIHk9IjIzNS4zOTk5OSIgd2lkdGg9IjYwNi4xMTAwMiIgaGVpZ2h0PSI2MDYuMTEwMDIiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2xpcC1wYXRoLTEyIj48cmVjdCBjbGFzcz0iY2xzLTEiIHg9IjI1OC43NzkwMSIgeT0iNDQzLjc5MTAxIiB3aWR0aD0iNjU0LjM5MTk3IiBoZWlnaHQ9IjE5My44MTc5OCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIxMC43MDQxOCA1NzIuNzIyOTMpIHJvdGF0ZSgtNDUuMDAwNjIpIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImNsaXAtcGF0aC0xNCI+PHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjQxMi45NiA2NzAuMDEgNDk0LjUgNzUyLjkgNDk0LjUgNjcwLjAxIDQxMi45NiA2NzAuMDEiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyBjbGFzcz0iY2xzLTIiPjxyZWN0IGNsYXNzPSJjbHMtMyIgeD0iMzY4LjAzIiB5PSIyNzYuODQiIHdpZHRoPSIxNTkuNDEiIGhlaWdodD0iNTk5LjQ0MDAzIi8+PC9nPjxnIGNsYXNzPSJjbHMtNCI+PGcgY2xhc3M9ImNscy01Ij48ZyBjbGFzcz0iY2xzLTYiPjxnIGNsYXNzPSJjbHMtNyI+PGcgY2xhc3M9ImNscy04Ij48cmVjdCBjbGFzcz0iY2xzLTkiIHg9IjExNS42NSIgeT0iNzAuMzY5OTciIHdpZHRoPSI2NjUuNjYiIGhlaWdodD0iNjY1LjY1OTk3Ii8+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBjbGFzcz0iY2xzLTQiPjxnIGNsYXNzPSJjbHMtNSI+PGcgY2xhc3M9ImNscy0xMCI+PGcgY2xhc3M9ImNscy0xMSI+PGcgY2xhc3M9ImNscy04Ij48cmVjdCBjbGFzcz0iY2xzLTEyIiB4PSItNTUuMzI5OTkiIHk9Ii0xMDAuNjAwMDEiIHdpZHRoPSI2OTkuMTQiIGhlaWdodD0iNjk5LjE0MDA0Ii8+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBjbGFzcz0iY2xzLTQiPjxnIGNsYXNzPSJjbHMtNSI+PGcgY2xhc3M9ImNscy0xMyI+PGcgY2xhc3M9ImNscy0xNCI+PGcgY2xhc3M9ImNscy04Ij48cmVjdCBjbGFzcz0iY2xzLTE1IiB4PSIyNTMuMTQiIHk9IjIwNy44NyIgd2lkdGg9IjY2NS42NTk5OSIgaGVpZ2h0PSI2NjUuNjU5OTciLz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsYXNzPSJjbHMtMTYiPjxyZWN0IGNsYXNzPSJjbHMtMTciIHg9IjM4MC42OSIgeT0iNjM2LjkwOTk3IiB3aWR0aD0iMTQ3LjAyOTk3IiBoZWlnaHQ9IjE0Ny42Njk5OCIvPjwvZz48L3N2Zz4=

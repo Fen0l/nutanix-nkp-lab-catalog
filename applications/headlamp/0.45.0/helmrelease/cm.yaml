@@ -1,0 +1,38 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): serve Headlamp on the NKP Traefik ingress at /headlamp
+    config:
+      baseURL: /headlamp
+    ingress:
+      enabled: true
+      ingressClassName: kommander-traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.tls: "true"
+      hosts:
+        - paths:
+            - path: /headlamp
+              type: Prefix
+    # Plugins installed at start-up by the plugin-manager sidecar (fetched from ArtifactHub):
+    # Kubescape (security posture UI), Flux (GitOps objects), cert-manager.
+    pluginsManager:
+      enabled: true
+      configContent: |
+        plugins:
+          - name: kubescape
+            source: https://artifacthub.io/packages/headlamp/kubescape-headlamp-plugin/headlamp_kubescape
+            version: 0.11.2
+          - name: flux
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_flux
+            version: 0.7.0
+          - name: cert-manager
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_cert-manager
+            version: 0.1.1
+        installOptions:
+          parallel: true
+          maxConcurrent: 3
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---

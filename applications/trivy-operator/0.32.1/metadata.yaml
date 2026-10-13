@@ -1,0 +1,53 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Trivy Operator
+description: >-
+  Continuous security scanning of the cluster: vulnerability, misconfiguration, secret, RBAC and SBOM
+  reports as Kubernetes CRDs. Installs into namespace trivy-system. No web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - security
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.23.0"
+supportLink: https://aquasecurity.github.io/trivy-operator/
+dependencies: []
+overview: |
+  ## Trivy Operator
+
+  The Trivy Operator continuously scans the cluster and stores results as custom resources:
+  `VulnerabilityReport`, `ConfigAuditReport`, `ExposedSecretReport`, `RbacAssessmentReport`,
+  `SbomReport`, `ClusterComplianceReport`.
+
+  **At a glance**
+  - Chart: `trivy-operator` 0.32.1 from `oci://ghcr.io/aquasecurity/helm-charts/trivy-operator`
+  - Installs into: namespace `trivy-system`, one instance per cluster
+  - Web UI: none of its own; the Policy Reporter entry shows the reports
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: trivy-operator-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Upstream defaults (all namespaces scanned, Trivy in
+  standalone mode, vulnerability DB downloaded from GHCR). Installed once per cluster into
+  `trivy-system`.
+
+  **Try it**: `kubectl get vulnerabilityreports -A` a few minutes after install.
+
+  **Lab override example** (limit scanning to selected namespaces):
+  ```yaml
+  targetNamespaces: "demo,default"
+  ```
+
+  **Links**: [Docs](https://aquasecurity.github.io/trivy-operator/) · [Chart](https://github.com/aquasecurity/trivy-operator/tree/main/deploy/helm) · [Default values](https://github.com/aquasecurity/trivy-operator/blob/main/deploy/helm/values.yaml) · [Releases](https://github.com/aquasecurity/trivy-operator/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+VHJpdnk8L3RpdGxlPjxwYXRoIGQ9Ik00LjM3NSA3LjMxMSAxLjk2MiA1LjkxOGEuMS4xIDAgMCAxIDAtLjE3NEwxMS44MjguMDQ3YS4zNDMuMzQzIDAgMCAxIC4zNDQgMGw5Ljg2NCA1LjY5NmEuMS4xIDAgMCAxIDAgLjE3NUwxOS42MjQgNy4zMWEuOTYyLjk2MiAwIDAgMS0uMDUyLS4wNzRjLS45MTQtMS40NzgtMi4xMjQtMi41OTItMy41OTYtMy4zMS00LjA4OC0xLjk5NC05LjE2NC0uNTA1LTExLjYgMy4zODVaTTEyLjI2MiAyMy44OTl2LTMuMTRjNS42OTMtMi4wODcgOS4wMS03Ljc2NiA3LjU4OC0xMi45ODVsMi40MzYtMS40MmEuMS4xIDAgMCAxIC4xNTEuMDg4djExLjY0NWEuMS4xIDAgMCAxLS4wNS4wODdsLTkuOTczIDUuODEyYS4xLjEgMCAwIDEtLjE1Mi0uMDg3Wm0tLjU1OS0zLjE0MXYzLjE0YS4xLjEgMCAwIDEtLjE1MS4wODZsLTkuOTMzLTUuODFhLjExNC4xMTQgMCAwIDEtLjA1Ni0uMDk5VjYuNDM2YS4xLjEgMCAwIDEgLjE1LS4wODdsMi40NCAxLjQxYy0xLjQ1NSA1LjMwNyAxLjg0NiAxMC45OTMgNy41NSAxM1pNNy4wMTMgOC44MzQgNC44MDcgNy41NjFjMi4zMDYtMy42NjUgNy4wOTQtNS4wNjYgMTAuOTUtMy4xODYgMS4zODUuNjc2IDIuNTI2IDEuNzI3IDMuMzkgMy4xMjRsLjA0LjA2Mi0yLjE5NSAxLjI2OGE1LjU3IDUuNTcgMCAwIDAtMi40MjktMi4zMDdjLTIuNjAzLTEuMjctNS45MDEtLjI1My03LjU1MiAyLjMxMVptOS4zMzcgNS4yYy44MTMtMS4zNzEgMS4wODgtMi45OS43OTgtNC42ODVsMi4yNTUtMS4zMTRjMS4yNDUgNC44Ni0xLjg2NCAxMC4xNjktNy4xNCAxMi4xOTJ2LTMuMDcyYzEuODYtLjY3IDMuMjcyLTEuNzQ3IDQuMDg3LTMuMTJaTTQuNiA4LjAxOGwyLjI3IDEuMzFjLS4yMjUgMS41NzEuMTEyIDMuMjA0Ljk1MSA0LjYwNi45MTkgMS41MzYgMi4yMjUgMi42MjkgMy44ODEgMy4yNXYzLjA0NUM2LjMyNyAxOC4yNSAzLjI5NyAxMy4wNDIgNC42MDEgOC4wMTdabTUuMzAzIDIuNDg2LTIuNDU5LTEuNDJjMS41Mi0yLjM0IDQuNTMtMy4yNjggNi45LTIuMTEyYTUuMDc1IDUuMDc1IDAgMCAxIDIuMjE2IDIuMTA4bC0yLjQ3MSAxLjQyN2EyLjMxMSAyLjMxMSAwIDAgMC0yLjAzLTEuMTk1Yy0uODI1IDAtMS42NDUuNDMtMi4xNTYgMS4xOTJabTQuMzM4LjUyMiAyLjQ0My0xLjQwOGMuMjIgMS41MS0uMDQzIDIuOTQ1LS43NjUgNC4xNjItLjczNSAxLjIzOC0xLjk5OCAyLjIyNC0zLjY1OCAyLjg1NnYtMi42MzFjMS4yNS0uNjkxIDEuOTY4LTEuNzcxIDEuOTgtMi45NzlaTTguMjUgMTMuNjc2QTYuNTc2IDYuNTc2IDAgMCAxIDcuMzQgOS42bDIuNDQ2IDEuNDEyYy0uMDE2IDEuMjcxLjczIDIuNDM3IDEuOTE3IDIuOTk3djIuNjI0YTYuOTc3IDYuOTc3IDAgMCAxLTMuNDUzLTIuOTU2Wm0zLjg1My0uMTQ4LS4xMzcuMDczLS4xNTctLjA3NWMtMS4wMjMtLjUwNC0xLjUyNC0xLjYwNi0xLjU1Ny0yLjQxN2ExLjk5IDEuOTkgMCAwIDEgLjAwNC0uMjMgMi4xNTMgMi4xNTMgMCAwIDEgMS4xNjMtLjk1N2MuNTA4LS4xNzggMS4wMzQtLjE1MyAxLjQ0NC4wNzEuNi4zMjcuODQuNzk3Ljg2Ljg2LjAwOC4xNTYuMDA0LjI1My4wMDQuMjU2LS4wMzguOTgxLS42MyAxLjg2My0xLjYyNCAyLjQxOVoiLz48L3N2Zz4=

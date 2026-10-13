@@ -1,0 +1,8 @@
+schema: catalog.nkp.nutanix.com/v1/catalog-release-spec
+releases:
+  - tagName: "2.18"
+    fileName: nutanix-nkp-lab-catalog-2.18.tar
+    collectionAnnotations:
+      org.opencontainers.image.source: https://github.com/Fen0l/nutanix-nkp-lab-catalog
+    constraints:
+      nkpVersion: "2.18"

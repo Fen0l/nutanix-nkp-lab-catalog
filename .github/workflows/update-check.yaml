@@ -1,0 +1,119 @@
+name: Track upstream versions
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  packages: write
+
+concurrency:
+  group: update-check
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: Compare with upstream
+    runs-on: ubuntu-latest
+    outputs:
+      outdated: ${{ steps.check.outputs.outdated }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+
+      - name: Check versions
+        id: check
+        run: |
+          set -euo pipefail
+          scripts/check-versions.sh | tee /tmp/versions.txt
+          scripts/check-versions.sh --markdown > docs/VERSIONS.md
+          scripts/check-versions.sh --json > /tmp/versions.json
+          scripts/catalog-stats.sh /tmp/versions.json
+          outdated="$(jq -c '[.[] | select(.status == "outdated")]' /tmp/versions.json)"
+          echo "outdated=${outdated}" >> "$GITHUB_OUTPUT"
+          cat docs/VERSIONS.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit docs/VERSIONS.md
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- docs/VERSIONS.md docs/badges; then echo "report unchanged"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/VERSIONS.md docs/badges
+          git commit -m "docs: refresh upstream version report and badges"
+          git push
+
+      - name: Find the existing report issue
+        id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --label report \
+            --search 'in:title "Upstream version report"' --json number --jq '.[0].number // empty')"
+          echo "number=${number}" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update the living issue
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Upstream version report"
+          content-filepath: docs/VERSIONS.md
+          labels: dependencies, report
+          issue-number: ${{ steps.find.outputs.number }}
+
+  bump:
+    name: bump ${{ matrix.item.app }} -> ${{ matrix.item.latest }}
+    needs: report
+    if: needs.report.outputs.outdated != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        item: ${{ fromJSON(needs.report.outputs.outdated) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create new version directory
+        run: scripts/bump-app.sh "${{ matrix.item.app }}" "${{ matrix.item.latest }}"
+
+      - uses: azure/setup-helm@v4
+        if: hashFiles(format('applications/{0}/.catalog-source.yaml', matrix.item.app)) != ''
+
+      - name: Mirror the new chart tarball to GHCR (HTTP-only upstream charts)
+        if: hashFiles(format('applications/{0}/.catalog-source.yaml', matrix.item.app)) != ''
+        env:
+          OCI_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/nutanix-nkp-lab-catalog/charts
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
+          export OCI_REGISTRY="$(echo "$OCI_REGISTRY" | tr '[:upper:]' '[:lower:]')"
+          src="applications/${{ matrix.item.app }}/.catalog-source.yaml"
+          scripts/mirror-chart.sh "$(yq -r '.helmrepoUrl' "$src")" "$(yq -r '.chart' "$src")" "${{ matrix.item.latest }}"
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.BUMP_TOKEN || github.token }}
+          delete-branch: true
+          branch: bump/${{ matrix.item.app }}-${{ matrix.item.latest }}
+          title: "chore(${{ matrix.item.app }}): add chart version ${{ matrix.item.latest }}"
+          commit-message: "chore(${{ matrix.item.app }}): add chart version ${{ matrix.item.latest }} (app ${{ matrix.item.appVersion }})"
+          labels: dependencies
+          body: |
+            Automated bump of **${{ matrix.item.app }}** from chart `${{ matrix.item.current }}` to `${{ matrix.item.latest }}` (app version `${{ matrix.item.appVersion }}`).
+
+            Source: `${{ matrix.item.source }}`
+
+            Review before merging (nothing is merged automatically):
+
+            - [ ] Upstream release notes read, no breaking change for the catalog defaults
+            - [ ] `helmrelease/cm.yaml` still applies (upstream defaults, NKP integration block)
+            - [ ] `metadata.yaml` overview still accurate (values block, notes, links)
+            - [ ] Validate and E2E green (if no checks appear, close and reopen the PR, or set the `BUMP_TOKEN` secret)
+            - [ ] Mirrored chart: tarball `${{ matrix.item.latest }}` pushed to GHCR by this run (check the job log)

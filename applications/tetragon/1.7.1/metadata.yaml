@@ -1,0 +1,52 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Tetragon
+description: >-
+  eBPF-based security observability and runtime enforcement from the Cilium project: process, file,
+  network and privilege events as JSON, TracingPolicy CRDs. Installs into namespace kube-system. No
+  web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - security
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://tetragon.io/docs/
+dependencies: []
+overview: |
+  ## Tetragon
+
+  Tetragon (Cilium project, CNCF) observes and enforces at the kernel level with eBPF: process
+  execution with full ancestry, file access, network connections and privilege changes, exported
+  as JSON events. `TracingPolicy` resources add targeted detection and, if wanted, in-kernel
+  enforcement (SIGKILL). It runs next to the NKP Cilium CNI.
+
+  **At a glance**
+  - Chart: `tetragon` 1.7.1, mirrored unchanged from https://helm.cilium.io to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/tetragon`
+  - Installs into: namespace `kube-system`, one instance per cluster
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: tetragon-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Upstream defaults (events to stdout, operator and agent
+  DaemonSet in `kube-system`).
+
+  **Try it**: `kubectl -n kube-system exec ds/tetragon -c tetragon -- tetra getevents -o compact`
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository
+  (https://helm.cilium.io); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://tetragon.io/docs/) · [Chart](https://github.com/cilium/tetragon/tree/main/install/kubernetes/tetragon) · [Default values](https://github.com/cilium/tetragon/blob/main/install/kubernetes/tetragon/values.yaml) · [Releases](https://github.com/cilium/tetragon/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+Q2lsaXVtPC90aXRsZT48cGF0aCBkPSJNMTMuNjA3IDE0LjU4M2gtMy4yMTVsLTEuNjI2LTIuNzY0IDEuNjI2LTIuODAyaDMuMjE1bDEuNjI2IDIuODAyLTEuNjI2IDIuNzY0Wk0xNC4xODYgOEg5Ljc5OWwtMi4yIDMuODEzIDIuMiAzLjc4N2g0LjM4N2wyLjIxMy0zLjc4N0wxNC4xODYgOFptLTQuMzg3IDguNC0yLjIgMy44MTNMOS43OTkgMjRoNC4zODdsMi4yMTMtMy43ODctMi4yMTMtMy44MTNIOS43OTlabS0xLjAzNCAzLjgxOSAxLjYyNy0yLjgwMmgzLjIxNWwxLjYyNiAyLjgwMi0xLjYyNiAyLjc2NWgtMy4yMTVsLTEuNjI3LTIuNzY1Wk05Ljc5OSAwbC0yLjIgMy44MTMgMi4yIDMuNzg3aDQuMzg3bDIuMjEzLTMuNzg3TDE0LjE4NiAwSDkuNzk5Wk04Ljc2NSAzLjgxOWwxLjYyNy0yLjgwMmgzLjIxNWwxLjYyNiAyLjgwMi0xLjYyNiAyLjc2NGgtMy4yMTVMOC43NjUgMy44MTlabTguMjM0IDguNTgxLTIuMiAzLjgxMyAyLjIgMy43ODdoNC4zODhsMi4yMTMtMy43ODctMi4yMTMtMy44MTNoLTQuMzg4Wm0tMS4wMzQgMy44MTkgMS42MjctMi44MDJoMy4yMTVsMS42MjYgMi44MDItMS42MjYgMi43NjVoLTMuMjE1bC0xLjYyNy0yLjc2NVpNMTYuOTk5IDRsLTIuMiAzLjgxMyAyLjIgMy43ODdoNC4zODhMMjMuNiA3LjgxMyAyMS4zODcgNGgtNC4zODhabS0xLjAzNCAzLjgxOSAxLjYyNy0yLjgwMmgzLjIxNWwxLjYyNiAyLjgwMi0xLjYyNiAyLjc2NGgtMy4yMTVsLTEuNjI3LTIuNzY0Wk0yLjU5OSAxMi40bC0yLjIgMy44MTNMMi41OTkgMjBoNC4zODdsMi4yMTMtMy43ODdMNi45ODYgMTIuNEgyLjU5OVptLTEuMDM0IDMuODE5IDEuNjI3LTIuODAyaDMuMjE0bDEuNjI3IDIuODAyLTEuNjI3IDIuNzY1SDMuMTkybC0xLjYyNy0yLjc2NVpNMi41OTkgNGwtMi4yIDMuODEzIDIuMiAzLjc4N2g0LjM4N2wyLjIxMy0zLjc4N0w2Ljk4NiA0SDIuNTk5Wk0xLjU2NSA3LjgxOWwxLjYyNy0yLjgwMmgzLjIxNGwxLjYyNyAyLjgwMi0xLjYyNyAyLjc2NEgzLjE5MkwxLjU2NSA3LjgxOVoiLz48L3N2Zz4=

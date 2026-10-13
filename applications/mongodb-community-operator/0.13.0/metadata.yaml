@@ -1,0 +1,48 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: MongoDB Community Operator
+description: >-
+  Official MongoDB operator (community edition): replica sets as MongoDBCommunity resources with SCRAM
+  users, TLS and persistent volumes. Installs into namespace mongodb. No web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - data
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://github.com/mongodb/mongodb-kubernetes
+dependencies: []
+overview: |
+  ## MongoDB Community Operator
+
+  MongoDB's community operator deploys and manages replica sets from a `MongoDBCommunity`
+  resource: members, version, users (SCRAM), TLS with cert-manager, storage.
+
+  **At a glance**
+  - Chart: `community-operator` 0.13.0, mirrored unchanged from https://mongodb.github.io/helm-charts to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/community-operator`
+  - Installs into: namespace `mongodb`, one instance per cluster
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: mongodb-community-operator-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Installed once per cluster into
+  `mongodb`; as upstream it **watches its own namespace**, so create `MongoDBCommunity`
+  resources in `mongodb` (override `operator.watchNamespace: "*"` to watch all).
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository
+  (https://mongodb.github.io/helm-charts); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://github.com/mongodb/mongodb-kubernetes/tree/master/docs/mongodbcommunity) · [Chart](https://github.com/mongodb/helm-charts/tree/main/charts/community-operator) · [Default values](https://github.com/mongodb/helm-charts/blob/main/charts/community-operator/values.yaml) · [Releases](https://github.com/mongodb/helm-charts/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+TW9uZ29EQjwvdGl0bGU+PHBhdGggZD0iTTE3LjE5MyA5LjU1NWMtMS4yNjQtNS41OC00LjI1Mi03LjQxNC00LjU3My04LjExNS0uMjgtLjM5NC0uNTMtLjk1NC0uNzM1LTEuNDQtLjAzNi40OTUtLjA1NS42ODUtLjUyMyAxLjE4NC0uNzIzLjU2Ni00LjQzOCAzLjY4Mi00Ljc0IDEwLjAyLS4yODIgNS45MTIgNC4yNyA5LjQzNSA0Ljg4OCA5Ljg4NGwuMDcuMDVBNzMuNDkgNzMuNDkgMCAwMTExLjkxIDI0aC40ODFjLjExNC0xLjAzMi4yODQtMi4wNTYuNTEtMy4wNy40MTctLjI5Ni42MDQtLjQ2My44NS0uNjkzYTExLjM0MiAxMS4zNDIgMCAwMDMuNjM5LTguNDY0Yy4wMS0uODE0LS4xMDMtMS42NjItLjE5Ny0yLjIxOHptLTUuMzM2IDguMTk1czAtOC4yOTEuMjc1LTguMjljLjIxMyAwIC40OSAxMC42OTUuNDkgMTAuNjk1LS4zODEtLjA0NS0uNzY1LTEuNzYtLjc2NS0yLjQwNXoiLz48L3N2Zz4=

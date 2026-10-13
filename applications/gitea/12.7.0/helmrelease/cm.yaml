@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # The upstream chart computes HTTP_PORT / SSH_LISTEN_PORT in a helper template, so a
+    # static render (what `nkp validate catalog-repository` does) leaves the Service
+    # targetPort empty and fails strict schema validation. Pinning the chart's own defaults
+    # makes the rendered manifests valid without changing runtime behaviour.
+    gitea:
+      config:
+        server:
+          HTTP_PORT: 3000
+          SSH_LISTEN_PORT: 2222
+    # Single replica on a ReadWriteOnce volume: the upstream RollingUpdate strategy cannot start the new
+    # pod while the old one holds the volume (Multi-Attach error), so every upgrade would stall.
+    strategy:
+      type: Recreate
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---

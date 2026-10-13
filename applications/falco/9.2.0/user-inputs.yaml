@@ -1,0 +1,53 @@
+schema: catalog.nkp.nutanix.com/v1/application-user-inputs
+# Declarative input form shown by the NKP UI when enabling the application (NKP 2.18+).
+# falco's web UI needs its own hostname (no sub-path support upstream). The form asks for the
+# cluster's ingress domain and serves the UI at falco.<domain> on the NKP Traefik, rendering the chart
+# overrides and the NKP dashboard card.
+groups:
+  - name: exposure
+    label: Web UI
+    description: >-
+      Expose the Falcosidekick UI on the cluster's NKP ingress (Traefik) as falco.<ingress domain>.
+      Use the cluster's ingress domain (for example nkp.example.com) with a wildcard DNS
+      record *.<domain> pointing at the Traefik address, or <traefik-ip>.nip.io when no DNS is available.
+    collapse: false
+    fields:
+      - name: ingressDomain
+        label: Ingress domain
+        type: string
+        description: Cluster ingress domain; the UI is served at falco.<domain> (needs *.<domain> -> Traefik).
+        required: true
+        default: ""
+resources:
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: falco-config-overrides
+      data:
+        values.yaml: |
+          falcosidekick:
+            enabled: true
+            webui:
+              enabled: true
+              ingress:
+                enabled: true
+                ingressClassName: kommander-traefik
+                annotations:
+                  traefik.ingress.kubernetes.io/router.tls: "true"
+                hosts:
+                  - host: falco.{{ ingressDomain }}
+                    paths:
+                      - path: /
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: falco-app-dashboard-info
+        labels:
+          kommander.d2iq.io/application: falco
+      data:
+        name: Falcosidekick UI
+        dashboardLink: https://falco.{{ ingressDomain }}/
+        docsLink: https://github.com/falcosecurity/falcosidekick-ui
+        version: "9.2.0"

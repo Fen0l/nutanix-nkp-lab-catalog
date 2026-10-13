@@ -1,0 +1,75 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: LitmusChaos
+description: >-
+  Chaos engineering platform (CNCF): ChaosCenter web UI, chaos experiments hub and resilience probes
+  for Kubernetes workloads. Installs into namespace litmus. Web UI on litmus.<ingress domain> (asked
+  when enabling).
+type: custom
+allowMultipleInstances: false
+category:
+  - testing
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://docs.litmuschaos.io/
+dependencies: []
+overview: |
+  ## LitmusChaos
+
+  LitmusChaos (CNCF incubating) runs chaos experiments (pod delete, network latency, node
+  drain, CPU/memory hog...) from the ChaosHub and measures resilience with probes, all from the
+  **ChaosCenter** web UI with experiment workflows and scheduling.
+
+  **At a glance**
+  - Chart: `litmus` 3.30.0 from `oci://ghcr.io/litmuschaos/litmus-helm/litmus`
+  - Installs into: namespace `litmus`, one instance per cluster
+  - Web UI: `https://litmus.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: litmus-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: ChaosCenter (frontend, auth and graphql
+  servers) with its own 3-node MongoDB replica set (persistent volumes). Installed once per cluster
+  into `litmus`. First login `admin` / `litmus`.
+
+  **Access**: when enabling, the form asks for the cluster **ingress domain** (for example
+  `itcs-nkp-mgmt-prod.itcs.local` with a wildcard DNS record, or `<traefik-ip>.nip.io`); ChaosCenter is then served on `https://litmus.<domain>/` and a card
+  appears on the cluster page.
+
+  **Ingress with a hostname**: the UI has no sub-path mode, so it is served as `litmus.<ingress domain>` and needs a DNS record (wildcard `*.<ingress domain>` to the NKP Traefik address, or `<traefik-ip>.nip.io`). The enable form writes exactly this ConfigMap; to set the host yourself, or from the CLI, create it and reference it in the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: litmus-config-overrides
+    namespace: <workspace namespace>
+  data:
+    values.yaml: |
+      ingress:
+        enabled: true
+        ingressClassName: kommander-traefik
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+        host:
+          name: litmus.<ingress domain>
+          frontend:
+            path: /
+            pathType: Prefix
+  ```
+
+  **NKP 2.18 notes**
+  - The chart writes the chart version into the `app.kubernetes.io/version` label. NKP 2.18 runs helm-controller with `DisableChartDigestTracking=true`, so the label is `3.30.0` and the install succeeds; on a Flux that tracks chart digests the version becomes `3.30.0+<digest>` and the install fails on label validation.
+
+  **Links**: [Docs](https://docs.litmuschaos.io/) · [ChaosHub](https://hub.litmuschaos.io/) · [Chart](https://github.com/litmuschaos/litmus-helm/tree/master/charts/litmus) · [Default values](https://github.com/litmuschaos/litmus-helm/blob/master/charts/litmus/values.yaml) · [Releases](https://github.com/litmuschaos/litmus-helm/releases)
+icon: PHN2ZyB3aWR0aD0iMTE3IiBoZWlnaHQ9IjE0NyIgdmlld0JveD0iMCAwIDExNyAxNDciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTE3IDBIMFYxMzUuOTc1QzAgMTQyLjA2NCA0LjkxMDg3IDE0NyAxMC45Njg3IDE0N0gxMDYuMDMxQzExMi4wODkgMTQ3IDExNyAxNDIuMDY0IDExNyAxMzUuOTc1VjBaIiBmaWxsPSIjODc4RURFIi8+CjxwYXRoIGQ9Ik0xNy43MjY2IDI2LjY0NDVDMTcuNzI2NiAyMi4yMjYzIDIxLjMwODMgMTguNjQ0NSAyNS43MjY2IDE4LjY0NDVIMjcuNDUzOEMzMS44NzIxIDE4LjY0NDUgMzUuNDUzOCAyMi4yMjYzIDM1LjQ1MzggMjYuNjQ0NVY1OS44MTM1SDE3LjcyNjZWMjYuNjQ0NVoiIGZpbGw9IiM1QTQ0QkEiLz4KPHBhdGggZD0iTTQxLjM2MzMgMTMwLjM4OFYxMTIuNzQ0SDkxLjI3MjRDOTUuNjkwNiAxMTIuNzQ0IDk5LjI3MjQgMTE2LjMyNiA5OS4yNzI0IDEyMC43NDRWMTIyLjM4OEM5OS4yNzI0IDEyNi44MDYgOTUuNjkwNyAxMzAuMzg4IDkxLjI3MjQgMTMwLjM4OEg0MS4zNjMzWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE3LjY5OTIgNjBIMzUuMzk5MlYxMjIuOEMzNS4zOTkyIDEyNy4yMTggMzEuODE3NSAxMzAuOCAyNy4zOTkyIDEzMC44SDI1LjY5OTJDMjEuMjgwOSAxMzAuOCAxNy42OTkyIDEyNy4yMTggMTcuNjk5MiAxMjIuOFY2MFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=

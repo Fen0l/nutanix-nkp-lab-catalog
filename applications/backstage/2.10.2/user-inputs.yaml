@@ -1,0 +1,54 @@
+schema: catalog.nkp.nutanix.com/v1/application-user-inputs
+# Declarative input form shown by the NKP UI when enabling the application (NKP 2.18+).
+# backstage's web UI needs its own hostname (no sub-path support upstream). The form asks for the
+# cluster's ingress domain and serves the UI at backstage.<domain> on the NKP Traefik, rendering the chart
+# overrides and the NKP dashboard card.
+groups:
+  - name: exposure
+    label: Web UI
+    description: >-
+      Expose the Backstage on the cluster's NKP ingress (Traefik) as backstage.<ingress domain>.
+      Use the cluster's ingress domain (for example nkp.example.com) with a wildcard DNS
+      record *.<domain> pointing at the Traefik address, or <traefik-ip>.nip.io when no DNS is available.
+    collapse: false
+    fields:
+      - name: ingressDomain
+        label: Ingress domain
+        type: string
+        description: Cluster ingress domain; the UI is served at backstage.<domain> (needs *.<domain> -> Traefik).
+        required: true
+        default: ""
+resources:
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: backstage-config-overrides
+      data:
+        values.yaml: |
+          ingress:
+            enabled: true
+            className: kommander-traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.tls: "true"
+            host: backstage.{{ ingressDomain }}
+          backstage:
+            appConfig:
+              app:
+                baseUrl: https://backstage.{{ ingressDomain }}
+              backend:
+                baseUrl: https://backstage.{{ ingressDomain }}
+                cors:
+                  origin: https://backstage.{{ ingressDomain }}
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: backstage-app-dashboard-info
+        labels:
+          kommander.d2iq.io/application: backstage
+      data:
+        name: Backstage
+        dashboardLink: https://backstage.{{ ingressDomain }}/
+        docsLink: https://backstage.io/docs/
+        version: "2.10.2"

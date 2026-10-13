@@ -1,0 +1,59 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: k6 Operator
+description: >-
+  Run distributed Grafana k6 load tests from a TestRun custom resource: scripts in ConfigMaps,
+  parallelism across pods, results to Prometheus. Installs into namespace k6-operator-system. No web
+  UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - testing
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.23.0"
+supportLink: https://grafana.com/docs/k6/latest/set-up/set-up-distributed-k6/
+dependencies: []
+overview: |
+  ## k6 Operator
+
+  The k6 Operator runs Grafana k6 load tests inside the cluster. A `TestRun` resource points at a
+  k6 script stored in a ConfigMap and fans the test out over several runner pods; results can be
+  sent to Prometheus remote write or Grafana Cloud.
+
+  **At a glance**
+  - Chart: `k6-operator` 4.6.0 from `oci://ghcr.io/grafana/helm-charts/k6-operator`
+  - Installs into: namespace `k6-operator-system`, one instance per cluster
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: k6-operator-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Installed once per cluster into
+  `k6-operator-system`.
+
+  **Try it**
+  ```
+  kubectl create configmap my-test --from-file=test.js
+  ```
+  ```yaml
+  apiVersion: k6.io/v1alpha1
+  kind: TestRun
+  metadata: { name: my-test }
+  spec:
+    parallelism: 2
+    script: { configMap: { name: my-test, file: test.js } }
+  ```
+
+  **Links**: [Docs](https://grafana.com/docs/k6/latest/set-up/set-up-distributed-k6/) · [Chart](https://github.com/grafana/k6-operator/tree/main/charts/k6-operator) · [Default values](https://github.com/grafana/k6-operator/blob/main/charts/k6-operator/values.yaml) · [Releases](https://github.com/grafana/k6-operator/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+azY8L3RpdGxlPjxwYXRoIGQ9Ik0yNCAyMy42NDZIMEw3Ljk5IDYuNjAzbDQuODEzIDMuNTM4TDE5LjA4LjM1NFptLTguOC0zLjY4MWguMDUyYTIuMjkyIDIuMjkyIDAgMCAwIDEuNTkzLS42NCAyLjA4OCAyLjA4OCAwIDAgMCAuNjg1LTEuNTc2IDEuOTEyIDEuOTEyIDAgMCAwLS42Ni0xLjUxMSAyLjAwOCAyLjAwOCAwIDAgMC0xLjM3LS41OWgtLjA0YS43MTYuNzE2IDAgMCAwLS4xOTkuMDI3bDEuMjY3LTEuODgzLTEuMDEtLjcwNS0uNDc3LjcwNS0xLjIyIDEuODY0Yy0uMjEuMzEtLjM4Ni41ODItLjQ5NS43Ny0uMTEyLjItLjIxLjQxLS4yOS42MjVhMS45NDIgMS45NDIgMCAwIDAtLjEzOC43MTkgMi4wODYgMi4wODYgMCAwIDAgLjY3NiAxLjU1OGMuNDIyLjQxMS45ODkuNjQxIDEuNTc4LjY0Wm0tNS4zNjUtMi4wMjcgMS4zOTggMS45NzhoMS40OTZsLTEuNjQ1LTIuMjk1IDEuNDYtMi4wMjktLjk3LS42NzEtLjQyNy41NjUtMS4zMTQgMS44NTN2LTMuNzI1bC0xLjMxLTEuMDY4djcuMzdoMS4zMXYtMS45OFptNS4zNjcuNzkyYS45NjMuOTYzIDAgMSAxIDAtMS45MjdoLjAwOWEuOTQxLjk0MSAwIDAgMSAuNjc5LjI5Ljg5Ny44OTcgMCAwIDEgLjI5LjY2OC45NzguOTc4IDAgMCAxLS45NzcuOTY3WiIvPjwvc3ZnPg==

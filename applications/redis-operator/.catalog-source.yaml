@@ -1,0 +1,4 @@
+# Upstream publishes this chart only in an HTTP Helm repository; the catalog mirrors the
+# unmodified tarball to OCI with scripts/mirror-chart.sh. Used by scripts/check-versions.sh.
+helmrepoUrl: https://ot-container-kit.github.io/helm-charts
+chart: redis-operator

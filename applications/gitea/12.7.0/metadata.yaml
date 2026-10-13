@@ -1,0 +1,108 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Gitea
+description: >-
+  Lightweight self-hosted Git service with issues, pull requests, packages and Gitea Actions CI. Handy
+  GitOps source for Flux and Argo demos. One instance per AppDeployment, each in its own namespace.
+  Web UI on gitea.<ingress domain> (asked when enabling).
+type: custom
+allowMultipleInstances: true
+category:
+  - developer-tools
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - project
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.23.0"
+supportLink: https://docs.gitea.com/
+dependencies: []
+overview: |
+  ## Gitea
+
+  Gitea is a painless self-hosted Git service: repositories, issues, pull requests, a
+  container/package registry and Gitea Actions (GitHub Actions compatible CI).
+  Use it as the Git source for Flux or Argo CD demos without leaving the lab.
+
+  **At a glance**
+  - Chart: `gitea` 12.7.0 from `oci://docker.gitea.com/charts/gitea`
+  - Installs into: one instance per AppDeployment, each in its own namespace
+  - Web UI: `https://gitea.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page)
+
+  **Changes from upstream**: the values this entry sets on top of the chart defaults. Override them with a `gitea-config-overrides` ConfigMap (key `values.yaml`) referenced in the AppDeployment `spec.configOverrides`.
+  ```yaml
+  # The upstream chart computes HTTP_PORT / SSH_LISTEN_PORT in a helper template, so a
+  # static render (what `nkp validate catalog-repository` does) leaves the Service
+  # targetPort empty and fails strict schema validation. Pinning the chart's own defaults
+  # makes the rendered manifests valid without changing runtime behaviour.
+  gitea:
+    config:
+      server:
+        HTTP_PORT: 3000
+        SSH_LISTEN_PORT: 2222
+  # Single replica on a ReadWriteOnce volume: the upstream RollingUpdate strategy cannot start the new
+  # pod while the old one holds the volume (Multi-Attach error), so every upgrade would stall.
+  strategy:
+    type: Recreate
+  ```
+
+  **Defaults worth knowing**: Upstream chart values plus the two technical changes listed above. The upstream chart deploys a
+  highly-available PostgreSQL (`postgresql-ha`) and a Valkey cluster by default (several
+  pods, persistent volumes required). Admin user `gitea_admin` with the chart's default
+  password (change it with `gitea.admin.password`).
+
+  **Access**: `https://gitea.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page).
+
+  **Ingress with a hostname**: the UI has no sub-path mode, so it is served as `gitea.<ingress domain>` and needs a DNS record (wildcard `*.<ingress domain>` to the NKP Traefik address, or `<traefik-ip>.nip.io`). The enable form writes exactly this ConfigMap; to set the host yourself, or from the CLI, create it and reference it in the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: gitea-config-overrides
+    namespace: <workspace namespace>
+  data:
+    values.yaml: |
+      ingress:
+        enabled: true
+        className: kommander-traefik
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+        hosts:
+          - host: gitea.<ingress domain>
+            paths:
+              - path: /
+                pathType: Prefix
+      gitea:
+        config:
+          server:
+            DOMAIN: gitea.<ingress domain>
+            ROOT_URL: https://gitea.<ingress domain>/
+  ```
+
+  **Lab override example** (single pod, SQLite, no database or cache pods):
+  ```yaml
+  postgresql-ha:
+    enabled: false
+  valkey-cluster:
+    enabled: false
+  gitea:
+    config:
+      database:
+        DB_TYPE: sqlite3
+      session:
+        PROVIDER: memory
+      cache:
+        ADAPTER: memory
+      queue:
+        TYPE: level
+  ```
+
+  **Try it**: `kubectl -n <namespace> port-forward svc/<instance>-http 3000:3000` then open http://localhost:3000
+
+  **NKP 2.18 notes**
+  - Upstream deploys PostgreSQL HA and a Valkey cluster by default (nine pods, six volumes); use the override above for a one-pod lab instance.
+  - Upgrades recreate the single pod (Recreate strategy): expect a short outage on each bump.
+
+  **Links**: [Docs](https://docs.gitea.com/) · [Chart](https://gitea.com/gitea/helm-gitea)
+icon: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJtYWluX291dGxpbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIKCSB5PSIwcHgiIHZpZXdCb3g9IjAgMCA2NDAgNjQwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA2NDAgNjQwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggaWQ9InRlYWJhZyIgc3R5bGU9ImZpbGw6I0ZGRkZGRiIgZD0iTTM5NS45LDQ4NC4ybC0xMjYuOS02MWMtMTIuNS02LTE3LjktMjEuMi0xMS44LTMzLjhsNjEtMTI2LjljNi0xMi41LDIxLjItMTcuOSwzMy44LTExLjgKCQljMTcuMiw4LjMsMjcuMSwxMywyNy4xLDEzbC0wLjEtMTA5LjJsMTYuNy0wLjFsMC4xLDExNy4xYzAsMCw1Ny40LDI0LjIsODMuMSw0MC4xYzMuNywyLjMsMTAuMiw2LjgsMTIuOSwxNC40CgkJYzIuMSw2LjEsMiwxMy4xLTEsMTkuM2wtNjEsMTI2LjlDNDIzLjYsNDg0LjksNDA4LjQsNDkwLjMsMzk1LjksNDg0LjJ6Ii8+Cgk8Zz4KCQk8Zz4KCQkJPHBhdGggc3R5bGU9ImZpbGw6IzYwOTkyNiIgZD0iTTYyMi43LDE0OS44Yy00LjEtNC4xLTkuNi00LTkuNi00cy0xMTcuMiw2LjYtMTc3LjksOGMtMTMuMywwLjMtMjYuNSwwLjYtMzkuNiwwLjdjMCwzOS4xLDAsNzguMiwwLDExNy4yCgkJCQljLTUuNS0yLjYtMTEuMS01LjMtMTYuNi03LjljMC0zNi40LTAuMS0xMDkuMi0wLjEtMTA5LjJjLTI5LDAuNC04OS4yLTIuMi04OS4yLTIuMnMtMTQxLjQtNy4xLTE1Ni44LTguNQoJCQkJYy05LjgtMC42LTIyLjUtMi4xLTM5LDEuNWMtOC43LDEuOC0zMy41LDcuNC01My44LDI2LjlDLTQuOSwyMTIuNCw2LjYsMjc2LjIsOCwyODUuOGMxLjcsMTEuNyw2LjksNDQuMiwzMS43LDcyLjUKCQkJCWM0NS44LDU2LjEsMTQ0LjQsNTQuOCwxNDQuNCw1NC44czEyLjEsMjguOSwzMC42LDU1LjVjMjUsMzMuMSw1MC43LDU4LjksNzUuNyw2MmM2MywwLDE4OC45LTAuMSwxODguOS0wLjFzMTIsMC4xLDI4LjMtMTAuMwoJCQkJYzE0LTguNSwyNi41LTIzLjQsMjYuNS0yMy40czEyLjktMTMuOCwzMC45LTQ1LjNjNS41LTkuNywxMC4xLTE5LjEsMTQuMS0yOGMwLDAsNTUuMi0xMTcuMSw1NS4yLTIzMS4xCgkJCQlDNjMzLjIsMTU3LjksNjI0LjcsMTUxLjgsNjIyLjcsMTQ5Ljh6IE0xMjUuNiwzNTMuOWMtMjUuOS04LjUtMzYuOS0xOC43LTM2LjktMTguN1M2OS42LDMyMS44LDYwLDI5NS40CgkJCQljLTE2LjUtNDQuMi0xLjQtNzEuMi0xLjQtNzEuMnM4LjQtMjIuNSwzOC41LTMwYzEzLjgtMy43LDMxLTMuMSwzMS0zLjFzNy4xLDU5LjQsMTUuNyw5NC4yYzcuMiwyOS4yLDI0LjgsNzcuNywyNC44LDc3LjcKCQkJCVMxNDIuNSwzNTkuOSwxMjUuNiwzNTMuOXogTTQyNS45LDQ2MS41YzAsMC02LjEsMTQuNS0xOS42LDE1LjRjLTUuOCwwLjQtMTAuMy0xLjItMTAuMy0xLjJzLTAuMy0wLjEtNS4zLTIuMWwtMTEyLjktNTUKCQkJCWMwLDAtMTAuOS01LjctMTIuOC0xNS42Yy0yLjItOC4xLDIuNy0xOC4xLDIuNy0xOC4xTDMyMiwyNzNjMCwwLDQuOC05LjcsMTIuMi0xM2MwLjYtMC4zLDIuMy0xLDQuNS0xLjVjOC4xLTIuMSwxOCwyLjgsMTgsMi44CgkJCQlsMTEwLjcsNTMuN2MwLDAsMTIuNiw1LjcsMTUuMywxNi4yYzEuOSw3LjQtMC41LDE0LTEuOCwxNy4yQzQ3NC42LDM2My44LDQyNS45LDQ2MS41LDQyNS45LDQ2MS41eiIvPgoJCQk8cGF0aCBzdHlsZT0iZmlsbDojNjA5OTI2IiBkPSJNMzI2LjgsMzgwLjFjLTguMiwwLjEtMTUuNCw1LjgtMTcuMywxMy44Yy0xLjksOCwyLDE2LjMsOS4xLDIwYzcuNyw0LDE3LjUsMS44LDIyLjctNS40CgkJCQljNS4xLTcuMSw0LjMtMTYuOS0xLjgtMjMuMWwyNC00OS4xYzEuNSwwLjEsMy43LDAuMiw2LjItMC41YzQuMS0wLjksNy4xLTMuNiw3LjEtMy42YzQuMiwxLjgsOC42LDMuOCwxMy4yLDYuMQoJCQkJYzQuOCwyLjQsOS4zLDQuOSwxMy40LDcuM2MwLjksMC41LDEuOCwxLjEsMi44LDEuOWMxLjYsMS4zLDMuNCwzLjEsNC43LDUuNWMxLjksNS41LTEuOSwxNC45LTEuOSwxNC45CgkJCQljLTIuMyw3LjYtMTguNCw0MC42LTE4LjQsNDAuNmMtOC4xLTAuMi0xNS4zLDUtMTcuNywxMi41Yy0yLjYsOC4xLDEuMSwxNy4zLDguOSwyMS4zYzcuOCw0LDE3LjQsMS43LDIyLjUtNS4zCgkJCQljNS02LjgsNC42LTE2LjMtMS4xLTIyLjZjMS45LTMuNywzLjctNy40LDUuNi0xMS4zYzUtMTAuNCwxMy41LTMwLjQsMTMuNS0zMC40YzAuOS0xLjcsNS43LTEwLjMsMi43LTIxLjMKCQkJCWMtMi41LTExLjQtMTIuNi0xNi43LTEyLjYtMTYuN2MtMTIuMi03LjktMjkuMi0xNS4yLTI5LjItMTUuMnMwLTQuMS0xLjEtNy4xYy0xLjEtMy4xLTIuOC01LjEtMy45LTYuM2M0LjctOS43LDkuNC0xOS4zLDE0LjEtMjkKCQkJCWMtNC4xLTItOC4xLTQtMTIuMi02LjFjLTQuOCw5LjgtOS43LDE5LjctMTQuNSwyOS41Yy02LjctMC4xLTEyLjksMy41LTE2LjEsOS40Yy0zLjQsNi4zLTIuNywxNC4xLDEuOSwxOS44CgkJCQlDMzQzLjIsMzQ2LjUsMzM1LDM2My4zLDMyNi44LDM4MC4xeiIvPgoJCTwvZz4KCTwvZz4KPC9nPgo8L3N2Zz4K

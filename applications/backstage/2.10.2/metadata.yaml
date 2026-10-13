@@ -1,0 +1,90 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Backstage
+description: >-
+  Open platform for building developer portals: software catalog, templates, TechDocs and plugins
+  (CNCF). Deploys the upstream demo image; bring your own app image for real use. One instance per
+  AppDeployment, each in its own namespace. Web UI on backstage.<ingress domain> (asked when
+  enabling).
+type: custom
+allowMultipleInstances: true
+category:
+  - developer-tools
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - project
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://backstage.io/docs/
+dependencies: []
+overview: |
+  ## Backstage
+
+  Backstage is the CNCF framework for internal developer portals: a software catalog of services and
+  owners, scaffolder templates, TechDocs and a plugin ecosystem.
+
+  **At a glance**
+  - Chart: `backstage` 2.10.2 from `oci://ghcr.io/backstage/charts/backstage`
+  - Installs into: one instance per AppDeployment, each in its own namespace
+  - Web UI: `https://backstage.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: backstage-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: The chart deploys the generic
+  `ghcr.io/backstage/backstage:latest` demo image with an in-memory SQLite database and no
+  PostgreSQL. Good for a tour; a real portal needs your own Backstage app image and `app-config`.
+
+  **Access**: `https://backstage.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page).
+
+  **Ingress with a hostname**: the UI has no sub-path mode, so it is served as `backstage.<ingress domain>` and needs a DNS record (wildcard `*.<ingress domain>` to the NKP Traefik address, or `<traefik-ip>.nip.io`). The enable form writes exactly this ConfigMap; to set the host yourself, or from the CLI, create it and reference it in the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: backstage-config-overrides
+    namespace: <workspace namespace>
+  data:
+    values.yaml: |
+      ingress:
+        enabled: true
+        className: kommander-traefik
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+        host: backstage.<ingress domain>
+      backstage:
+        appConfig:
+          app:
+            baseUrl: https://backstage.<ingress domain>
+          backend:
+            baseUrl: https://backstage.<ingress domain>
+            cors:
+              origin: https://backstage.<ingress domain>
+  ```
+
+  **Lab override example** (your image, PostgreSQL from the chart):
+  ```yaml
+  backstage:
+    image: { registry: harbor.example.com, repository: platform/backstage, tag: "1.0.0" }
+    appConfig:
+      app: { baseUrl: https://backstage.example.com }
+      backend: { baseUrl: https://backstage.example.com }
+  postgresql:
+    enabled: true
+  ```
+  `kubectl -n <namespace> port-forward svc/<instance> 7007:7007` opens the portal.
+
+  **NKP 2.18 notes**
+  - The demo image uses an in-memory SQLite database: catalog entities are lost when the pod restarts. Set `postgresql.enabled: true` for anything persistent.
+
+  **Links**: [Docs](https://backstage.io/docs/) · [Chart](https://github.com/backstage/charts/tree/main/charts/backstage) · [Default values](https://github.com/backstage/charts/blob/main/charts/backstage/values.yaml) · [Releases](https://github.com/backstage/charts/releases)
+icon: PHN2ZyBpZD0iQXNzZXRzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMzcuNDY0NzUgNDI4LjQ5ODk2Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzdkZjNlMTt9PC9zdHlsZT48L2RlZnM+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzAzLjAyODU2LDE2Ni4wNDgxNmE4MC4zODQsODAuMzg0LDAsMCwwLDEzLjQ0ODI1LTEwLjM3MTI4Yy43OTQxOS0uNzYyMjcsMS41NTA0MS0xLjUzMDUyLDIuMzAwNzgtMi4zMDA3OGE4Mi4wNDg4NSw4Mi4wNDg4NSwwLDAsMCw3LjkyOTItOS4zNzgxMSw2My40MjQwNyw2My40MjQwNywwLDAsMCw2LjI2OTI4LTEwLjc2NTM5LDQ4LjYxNTksNDguNjE1OSwwLDAsMCw0LjM1ODc3LTE2LjM5NzgyYzEuNDgyNzktMTkuMzkxMTgtOS45NjcyOS0zOC42NzQ5My0zNS42MjE5NS01NC4yMjY4N0wxOTguNTU3MzcsMGwtMTIwLjI2LDExNS4yMjY2MkwwLDE5MC4yNDc4bDEwOC42MDEwNyw2NS45MDc3OGExMTEuNjA1MzQsMTExLjYwNTM0LDAsMCwwLDU3Ljc2MTcyLDE2LjQxNTc3YzI0LjkyMjEyLDAsNDguODAxMjctOC44MDMsNjYuNDE5MTktMjUuNjg2NDYsMTkuMTU4MzMtMTguMzYyMTgsMjUuNTE5MjktNDIuMTI4LDEzLjY5Ny02MS44NzE0NmE0OS4wMDg2LDQ5LjAwODYsMCwwLDAtNi43OTg3LTguODY4NjUsODkuMzI1NjEsODkuMzI1NjEsMCwwLDAsMTkuMjg1NzYsMi4xNDM1NWMuMDUxNjQsMCwuMTAxNDQuMDA0LjE1MTEzLjAwNGE4NS4wMTI0NCw4NS4wMTI0NCwwLDAsMCwzMC45NzA3LTUuNzkzN0E4MC41MzYsODAuNTM2LDAsMCwwLDMwMy4wMjg1NiwxNjYuMDQ4MTZaTTIwMi40NDU0MywyMjUuODU1ODNjLTE5LjMxOTcsMTguNTEtNTAuMzk4NTUsMjEuMjM2NjQtNzUuNjk5ODIsNS44OTkzNkw1MS42MTMyOCwxODYuMTQ3NTJsNjcuNDQzMzYtNjQuNjQyMzksNzYuNDE2ODcsNDYuMzg2MTdDMjIzLjAxMDc0LDE4NC41ODQwNSwyMjEuNDkwNzIsMjA3LjYwNzQyLDIwMi40NDU0MywyMjUuODU1ODNabTguOTMzNDgtODIuMjE3MzQtNzAuNjQ3MjItNDIuODg4OCw2NC40MDcyMy02MS43NjgzN0wyNzQuNTA4Myw4MS4wOTU1OGMyNS45NDAwNiwxNS43MjQ1NSwyOS4zMTAwNiwzNy4wNDEyNiwxMC41NTA0Miw1NS4wMTdBNjAuNzA1MDYsNjAuNzA1MDYsMCwwLDEsMjExLjM3ODkxLDE0My42Mzg0OVptMjkuODY1NzIsMTkwLjA0MDFjLTE5LjU3NjMsMTguNzU2MjktNDYuMTcwMjksMjkuMDg3NzctNzQuODgxODQsMjkuMDg3NzdBMTIzLjgxNjE2LDEyMy44MTYxNiwwLDAsMSwxMDIuMjU2MSwzNDQuNTczM0wwLDI4Mi41MTY3MlYzMDcuMTk0bDEwOC42MDEwNyw2NS45MDc3OGExMTEuNjA1MzYsMTExLjYwNTM2LDAsMCwwLDU3Ljc2MTcyLDE2LjQxNTcxYzI0LjkyMjEyLDAsNDguODAxMjctOC44MDI5Miw2Ni40MTkxOS0yNS42ODY0LDEyLjg3NzA4LTEyLjM0MTYyLDE5Ljk5MDI0LTI3LjEyOTM0LDE5LjY3OTgxLTQxLjQ5MzExbC0uMDAyMDctMS43OTEyNkE4Ny4wOTQ5Myw4Ny4wOTQ5MywwLDAsMSwyNDEuMjQ0NjMsMzMzLjY3ODU5Wm0wLTM4Ljk4MzQ2Yy0xOS41NzYzLDE4Ljc1NjM1LTQ2LjE3MDI5LDI5LjA4NzgzLTc0Ljg4MTg0LDI5LjA4NzgzQTEyMy44MTYxNiwxMjMuODE2MTYsMCwwLDEsMTAyLjI1NjEsMzA1LjU4OTlMMCwyNDMuNTMzMzN2MjQuNjc5MzJsMTA4LjYwMTA3LDY1LjkwNzc3YTExMS42MDU4MywxMTEuNjA1ODMsMCwwLDAsNTcuNzYxNzIsMTYuNDE1NzFjMjQuOTIyMTIsMCw0OC44MDEyNy04LjgwMyw2Ni40MTkxOS0yNS42ODY0LDEyLjg3NzA4LTEyLjM0MzYzLDE5Ljk5MDI0LTI3LjEyOTMzLDE5LjY3OTgxLTQxLjQ5NTEybC0uMDAyMDctMS43ODkyNEE4Ni45ODAwNiw4Ni45ODAwNiwwLDAsMSwyNDEuMjQ0NjMsMjk0LjY5NTEzWm0wLTM4Ljk4MTM4Yy0xOS41NzYzLDE4Ljc1NjI4LTQ2LjE3MDI5LDI5LjA4Nzc2LTc0Ljg4MTg0LDI5LjA4Nzc2YTEyMy44MTU2OCwxMjMuODE1NjgsMCwwLDEtNjQuMTA2NjktMTguMTkzMDVMMCwyMDQuNTUxODh2MjQuNjc3MzdMMTA4LjYwMTA3LDI5NS4xMzdhMTExLjYwNTgzLDExMS42MDU4MywwLDAsMCw1Ny43NjE3MiwxNi40MTU3MWMyNC45MjIxMiwwLDQ4LjgwMTI3LTguODAzLDY2LjQxOTE5LTI1LjY4NjQsMTIuODc3MDgtMTIuMzQxNjcsMTkuOTkwMjQtMjcuMTI5MzksMTkuNjc5ODEtNDEuNDkzMTZsLS4wMDIwNy0xLjgyMzA2QTg2LjQ3MTQ1LDg2LjQ3MTQ1LDAsMCwxLDI0MS4yNDQ2MywyNTUuNzEzNzVabTgzLjY5MDc5LDI1LjczODE1YTk0LjEzNzMyLDk0LjEzNzMyLDAsMCwxLTYwLjE5MTc3LDI1Ljg1NTZ2LS4wMDJoLS4wMTE4NGwuMDExODQsMjYuNjY3NjZhODEuNjUyNzcsODEuNjUyNzcsMCwwLDAsNTEuNzMzMTYtMjIuMzY4NjVjMTMuOTY3NzctMTMuMzg0NTgsMjEuMTQ0NTMtMjguMTEwNTksMjAuOTg1MzUtNDIuNjQxNTR2LTIuMTk3MjZBOTUuMTYxMDYsOTUuMTYxMDYsMCwwLDEsMzI0LjkzNTQyLDI4MS40NTE5Wk0yNDEuMjQ0NjMsMzcyLjY2Yy0xOS41NzYzLDE4Ljc1NjI5LTQ2LjE3MDI5LDI5LjA4Nzc3LTc0Ljg4MTg0LDI5LjA4Nzc3YTEyMy44MTYyNSwxMjMuODE2MjUsMCwwLDEtNjQuMTA2NjktMTguMTkzMDVMMCwzMjEuNDk4MTF2MjQuNjc3MzdsMTA4LjYwMTA3LDY1LjkwNzcxQTExMS42MDUzNCwxMTEuNjA1MzQsMCwwLDAsMTY2LjM2Mjc5LDQyOC40OTljMjQuOTIyMTIsMCw0OC44MDEyNy04LjgwMyw2Ni40MTkxOS0yNS42ODY0LDEyLjg3NzA4LTEyLjM0MTY3LDE5Ljk5MDI0LTI3LjEyOTM5LDE5LjY3OTgxLTQxLjQ5MzE2bC0uMDAyMDctMS43ODkyNUE4Ni45ODI4OSw4Ni45ODI4OSwwLDAsMSwyNDEuMjQ0NjMsMzcyLjY2Wm04NS43NDQ3NS0yMTAuMjA2MjNjLS42Nzg1OS42ODY2NC0xLjM0NTM0LDEuMzczMjktMi4wNTQsMi4wNTE5NEE5OS4yOTU2OCw5OS4yOTU2OCwwLDAsMSwzMDIuNzA0MSwxODAuMTkzYTk0LjY3OTkxLDk0LjY3OTkxLDAsMCwxLTI2LjI0NTYsOC43MTE0Myw5OC4wODY2NCw5OC4wODY2NCwwLDAsMS0xNC4xNjA4OSwxLjU2NjM0Yy41MDU2MSwxLjYxMjEzLjkwMzY4LDMuMjUwMDcsMS4yNSw0LjkwMmE1My4xNTk3NCw1My4xNTk3NCwwLDAsMSwxLjEzODQzLDEyLjAwMTI4bC4wMDM5LDkuNjUyODRoLjA1MzcxQTg0LjI2OTgzLDg0LjI2OTgzLDAsMCwwLDI5MC4wODc4OSwyMTEuNDhhODAuOTUzODIsODAuOTUzODIsMCwwLDAsMjYuMzg4OTItMTYuODIxNzhjLjgwMi0uNzcwMiwxLjUwNDY0LTEuNTU4MzUsMi4yNjI5NC0yLjMzNjU0YTgyLjA0ODcyLDgyLjA0ODcyLDAsMCwwLDcuOTI3MjQtOS4zODAxOSw2My4zMjc5Miw2My4zMjc5MiwwLDAsMCw2LjI4MzIxLTEwLjc3NTI3LDQ4LjQ0MjE4LDQ4LjQ0MjE4LDAsMCwwLDQuMzE5LTE2LjQ0MTY1Yy4wOTE1NS0xLjIzNi4yMDUtMi40NzM4OC4xOTMtMy43MDc4OXYtMi4wNDhxLTEuMDgwNjksMS41NTI0NS0yLjI1NywzLjA4ODkzQTk3LjY2NTY2LDk3LjY2NTY2LDAsMCwxLDMyNi45ODkzOCwxNjIuNDUzNzRabS0uMDMxODYsNzcuOTIxYy0uNjg2NTIuNjk0NTgtMS4zMDU2NiwxLjQwNzEtMi4wMjIxLDIuMDkzNzVhOTQuMTMwNTQsOTQuMTMwNTQsMCwwLDEtNjAuMTkxNzcsMjUuODU3NnYtLjAwMmgtLjAyOTc4bC4wMTIsMjYuNjY3NmguMDEzOTJsLjAwMzkuMDAydi0uMDAyYTgxLjY1MjgyLDgxLjY1MjgyLDAsMCwwLDUxLjczMzE2LTIyLjM2ODY1LDczLjU0NjYsNzMuNTQ2NiwwLDAsMCwxNi40NzMzOS0yMi40OTIsNDguNDUzODYsNDguNDUzODYsMCwwLDAsNC4zMTktMTYuNDQxNTljLjA5MTU1LTEuMjM4LjIwNS0yLjQ3MzkzLjE5My0zLjcwOTl2LTIuMTkzMjNjLS43NDQzOSwxLjA3NDctMS40NjQ4NSwyLjE1MzQ0LTIuMjcyODMsMy4yMTYyNEE5Ny4xMDQsOTcuMTA0LDAsMCwxLDMyNi45NTc1MiwyNDAuMzc0NzZabTAtMzguOTgxNDVjLS42ODY1Mi42OTQ2NC0xLjMwMzU5LDEuNDA3MTctMi4wMjIxLDIuMDkzODFhOTcuMTg1LDk3LjE4NSwwLDAsMS0yMi4yNTEyMiwxNS42NzUzNiw5NS42Njg3MSw5NS42Njg3MSwwLDAsMS0zNy45NDA1NSwxMC4xODAyM0gyNjQuNjk2bC4wMTE4NSwyNi42Njc2aC4wMjk5bC4wMDU4Ni4wMDJ2LS4wMDJhODEuNjUwNjgsODEuNjUwNjgsMCwwLDAsNTEuNzMzMTYtMjIuMzcwNjZjLjgwMi0uNzcwMiwxLjUwNDY0LTEuNTU4MzUsMi4yNjI5NC0yLjMzNjU1QTgyLjA1MjU2LDgyLjA1MjU2LDAsMCwwLDMyNi42NjcsMjIxLjkyM2E2My4zMzAzMSw2My4zMzAzMSwwLDAsMCw2LjI4MzIxLTEwLjc3NTMzLDQ4LjQ0MTgsNDguNDQxOCwwLDAsMCw0LjMxOS0xNi40NDE1OWMuMDkxNTUtMS4yMzYuMjA1LTIuNDczOTMuMTkzLTMuNzA3ODh2LTIuMTkzM2MtLjc0NDM5LDEuMDc0NzctMS40NjQ4NSwyLjE1MzUtMi4yNzI4MywzLjIxNjMxQTk3LjMzNjkzLDk3LjMzNjkzLDAsMCwxLDMyNi45NTc1MiwyMDEuMzkzMzFaIi8+PC9zdmc+

@@ -1,0 +1,68 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: VictoriaLogs
+description: >-
+  Fast, resource-efficient log database with full-text search and a built-in web UI (vmui).
+  Lightweight alternative to Loki for labs and edge clusters. Installs into namespace victoria-logs.
+  Web UI at /victoria-logs/select/vmui/ on the cluster ingress.
+type: custom
+allowMultipleInstances: false
+category:
+  - observability
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://docs.victoriametrics.com/victorialogs/
+dependencies: []
+overview: |
+  ## VictoriaLogs
+
+  VictoriaLogs stores and searches logs with LogsQL at a fraction of the resources of
+  Elasticsearch, and ships a web UI (vmui). It accepts logs from Fluent Bit, Vector,
+  OpenTelemetry, Loki-compatible pushers and syslog.
+
+  **At a glance**
+  - Chart: `victoria-logs-single` 0.13.10 from `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single`
+  - Installs into: namespace `victoria-logs`, one instance per cluster
+  - Web UI: `https://<cluster ingress>/victoria-logs/select/vmui/` (dashboard card on the cluster page)
+
+  **Changes from upstream**: the values this entry sets on top of the chart defaults. Override them with a `victoria-logs-config-overrides` ConfigMap (key `values.yaml`) referenced in the AppDeployment `spec.configOverrides`.
+  ```yaml
+  # --- NKP integration (lab catalog): served natively under /victoria-logs on the NKP Traefik
+  server:
+    extraArgs:
+      http.pathPrefix: /victoria-logs
+    ingress:
+      enabled: true
+      ingressClassName: kommander-traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.tls: "true"
+      hosts:
+        - name: ""
+          path:
+            - /victoria-logs
+          port: http
+  ```
+
+  **Defaults worth knowing**: Upstream chart values plus the NKP integration block: single-node server
+  with a 10 GiB persistent volume, served at `https://<cluster ingress>/victoria-logs/` (UI at
+  `/victoria-logs/select/vmui/`, dashboard card).
+
+  **Access**: `https://<cluster ingress>/victoria-logs/select/vmui/` (dashboard card on the cluster page).
+
+  **Feed it from the NKP Fluent Bit** (override on the fluent-bit platform app):
+  ```
+  [OUTPUT]
+      Name  http
+      Match *
+      Host  victoria-logs-victoria-logs-single-server.victoria-logs
+      Port  9428
+      URI   /insert/jsonline?_stream_fields=kubernetes.namespace_name,kubernetes.pod_name&_msg_field=log&_time_field=date
+      Format json_lines
+  ```
+
+  **Links**: [Docs](https://docs.victoriametrics.com/victorialogs/) · [Chart](https://github.com/VictoriaMetrics/helm-charts/tree/master/charts/victoria-logs-single) · [Default values](https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-logs-single/values.yaml) · [Releases](https://github.com/VictoriaMetrics/helm-charts/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+VmljdG9yaWFNZXRyaWNzPC90aXRsZT48cGF0aCBkPSJNMS44OTMgMy4wNzhDLjIzOSAxLjUzNyA0Ljg0Ni4wMDkgMTEuOTYzIDBoLjA3NmM3LjExNi4wMDkgMTEuNzIzIDEuNTM3IDEwLjA2NyAzLjA3OCAwIDAtNi4xNjggNS42NTUtOC4zMDEgNy40NzMtLjQwNC4zNDYtMS4wODQuNjA3LTEuNzY2LjYxNmgtLjA3NmMtLjY4Mi0uMDA5LTEuMzYyLS4yNzEtMS43NjctLjYxNi0yLjEzMi0xLjgxOC04LjMwMS03LjQ3My04LjMwMy03LjQ3M1ptMjAuNTQ5IDIuNzcxVjguNThjMCAuMy0uMTE1LjY5OC0uMzE5Ljg4NS0xLjMzMiAxLjIyMi02LjQ3IDUuOTI1LTguMzE5IDcuNTAyLS40MDUuMzQ1LTEuMDg1LjYwNi0xLjc2Ny42MTVoLS4wNzJjLS42ODMtLjAwOS0xLjM2Mi0uMjctMS43NjctLjYxNS0xLjg0OS0xLjU3Ny02Ljk4Ny02LjI4LTguMzItNy41MDItLjIwNC0uMTg3LS4zMTgtLjU4NS0uMzE4LS44ODVWNS44NDljMS45NiAxLjc4OCA3LjE2MyA2LjUwNSA4LjYzOCA3Ljc2NC40MDQuMzQ2IDEuMDg0LjYwNyAxLjc2Ny42MTZoLjA3MmMuNjgyLS4wMDkgMS4zNjItLjI3MSAxLjc2Ny0uNjE2IDEuNDc0LTEuMjU4IDYuNjc4LTUuOTczIDguNjM4LTcuNzY0Wm0wIDYuNDE4djIuNzNjMCAuMzAxLS4xMTUuNjk4LS4zMTkuODg1LTEuMzMyIDEuMjIyLTYuNDcgNS45MjYtOC4zMTkgNy41MDItLjQwNS4zNDYtMS4wODUuNjA3LTEuNzY3LjYxNmgtLjA3MmMtLjY4My0uMDA5LTEuMzYyLS4yNzEtMS43NjctLjYxNi0xLjg0OS0xLjU3Ni02Ljk4Ny02LjI4LTguMzItNy41MDItLjIwNC0uMTg3LS4zMTgtLjU4NS0uMzE4LS44ODV2LTIuNzNjMS45NiAxLjc4OCA3LjE2MyA2LjUwNSA4LjYzOCA3Ljc2NC40MDQuMzQ2IDEuMDg0LjYwNiAxLjc2Ny42MTVoLjA3MmMuNjgyLS4wMDkgMS4zNjItLjI3IDEuNzY3LS42MTUgMS40NzQtMS4yNTggNi42NzgtNS45NzYgOC42MzgtNy43NjRaIi8+PC9zdmc+

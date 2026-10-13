@@ -1,0 +1,81 @@
+name: Publish catalog
+
+# Build the collection from .release/stable.yaml (main) or .release/dev.yaml (other branches)
+# and push it to oci://ghcr.io/<owner>/nutanix-nkp-lab-catalog/collection:<tag>.
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["applications/**", ".release/**", ".github/workflows/publish.yaml"]
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: "Release spec"
+        required: true
+        default: stable
+        type: choice
+        options: [stable, dev]
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  NKP_VERSION: "2.18.0"
+  REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+jobs:
+  publish:
+    name: Build and push OCI artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nkp CLI
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://downloads.d2iq.com/dkp/v${NKP_VERSION}/nkp_v${NKP_VERSION}_linux_amd64.tar.gz" | tar -xz -C /tmp nkp
+          sudo install -m 0755 /tmp/nkp /usr/local/bin/nkp
+          nkp version
+
+      - name: Select release spec
+        id: spec
+        run: |
+          spec="${{ inputs.spec }}"
+          if [[ -z "$spec" ]]; then
+            if [[ "${GITHUB_REF_NAME}" == "main" ]]; then spec=stable; else spec=dev; fi
+          fi
+          echo "file=.release/${spec}.yaml" >> "$GITHUB_OUTPUT"
+          echo "Using .release/${spec}.yaml"
+
+      - name: Validate
+        run: nkp validate catalog-repository --repo-dir .
+
+      - name: Build collection bundles
+        run: |
+          nkp experimental catalog release --release-spec "${{ steps.spec.outputs.file }}" --repo-dir .
+          ls -la ./*.tar
+
+      - name: Push bundles to GHCR
+        run: |
+          set -euo pipefail
+          registry="$(echo "${REGISTRY}" | tr '[:upper:]' '[:lower:]')"
+          for tar in ./*.tar; do
+            echo "== pushing ${tar} -> ${registry}"
+            nkp push bundle --bundle "${tar}" \
+              --to-registry "${registry}" \
+              --to-registry-username "${{ github.actor }}" \
+              --to-registry-password "${{ secrets.GITHUB_TOKEN }}"
+          done
+
+      - name: Summary
+        run: |
+          registry="$(echo "${REGISTRY}" | tr '[:upper:]' '[:lower:]')"
+          {
+            echo "## Published"
+            for tag in $(yq -r '.releases[].tagName' "${{ steps.spec.outputs.file }}"); do
+              echo '```'
+              echo "nkp create catalog-collection --url oci://${registry}/nutanix-nkp-lab-catalog/collection --tag ${tag} --workspace kommander-workspace"
+              echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"

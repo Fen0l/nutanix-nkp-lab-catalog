@@ -1,0 +1,64 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: NGINX Gateway Fabric
+description: >-
+  Kubernetes Gateway API implementation based on NGINX: one GatewayClass, NGINX data planes
+  provisioned per Gateway resource. Installs into namespace nginx-gateway. No web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - api-gateway
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://docs.nginx.com/nginx-gateway-fabric/
+dependencies: []
+requiredDependencies:
+  - gateway-api-crds
+overview: |
+  ## NGINX Gateway Fabric
+
+  NGINX Gateway Fabric (NGF) implements the Kubernetes Gateway API with NGINX. The control plane
+  is installed by this chart; an NGINX data plane (Deployment + Service) is created for each
+  `Gateway` you define.
+
+  **At a glance**
+  - Chart: `nginx-gateway-fabric` 2.7.2 from `oci://ghcr.io/nginx/charts/nginx-gateway-fabric`
+  - Installs into: namespace `nginx-gateway`, one instance per cluster
+  - Web UI: none (operator / controller)
+  - Requires: `gateway-api-crds` (installed first, enforced by the UI)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: nginx-gateway-fabric-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: GatewayClass `nginx`, data-plane Services
+  of type LoadBalancer (served by MetalLB on NKP). Installed once per cluster into `nginx-gateway`.
+
+  **Requires**: the Gateway API CRDs (NKP platform application `gateway-api-crds`, or
+  `kubectl apply -k https://github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.6.1`).
+
+  **Example**
+  ```yaml
+  apiVersion: gateway.networking.k8s.io/v1
+  kind: Gateway
+  metadata: { name: demo }
+  spec:
+    gatewayClassName: nginx
+    listeners: [ { name: http, port: 80, protocol: HTTP } ]
+  ```
+
+  **NKP 2.18 notes**
+  - NGINX Gateway Fabric 2.7 requires Gateway API v1.6. The NKP 2.18 platform application `gateway-api-crds` installs v1.3.0, so enable the Envoy Gateway entry first (its chart upgrades the CRDs to v1.6.1 in place) or apply the v1.6.1 CRDs yourself.
+
+  **Links**: [Docs](https://docs.nginx.com/nginx-gateway-fabric/) · [Chart](https://github.com/nginx/nginx-gateway-fabric/tree/main/charts/nginx-gateway-fabric) · [Default values](https://github.com/nginx/nginx-gateway-fabric/blob/main/charts/nginx-gateway-fabric/values.yaml) · [Releases](https://github.com/nginx/nginx-gateway-fabric/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+TkdJTlg8L3RpdGxlPjxwYXRoIGQ9Ik0xMiAwTDEuNjA1IDZ2MTJMMTIgMjRsMTAuMzk1LTZWNkwxMiAwem02IDE2LjU5YzAgLjcwNS0uNjQ2IDEuMjktMS41MjkgMS4yOS0uNjMxIDAtMS4zNTEtLjI1NS0xLjgwMS0uODFsLTYtNy4xNDF2Ni42NmMwIC43MjEtLjU3IDEuMjktMS4yNzQgMS4yOUg3LjMyYy0uNzIxIDAtMS4yOS0uNi0xLjI5LTEuMjlWNy40MWMwLS43MDUuNjMtMS4yOSAxLjUtMS4yOS42NDYgMCAxLjM4LjI1NSAxLjgzLjgxbDUuOTcgNy4xNDFWNy40MWMwLS43MjEuNi0xLjI5IDEuMjktMS4yOWguMDc1Yy43MiAwIDEuMjkuNiAxLjI5IDEuMjl2OS4xOEgxOHoiLz48L3N2Zz4=

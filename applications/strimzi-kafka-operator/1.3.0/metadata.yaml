@@ -1,0 +1,53 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Strimzi (Apache Kafka)
+description: >-
+  Operator that runs Apache Kafka on Kubernetes: brokers in KRaft mode, topics, users, Connect,
+  MirrorMaker and Cruise Control as custom resources (CNCF). Installs into namespace kafka. No web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - data
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://strimzi.io/documentation/
+dependencies: []
+overview: |
+  ## Strimzi Kafka Operator
+
+  Strimzi provides a way to run an Apache Kafka cluster on Kubernetes with custom resources:
+  `Kafka`, `KafkaNodePool`, `KafkaTopic`, `KafkaUser`, `KafkaConnect`, `KafkaMirrorMaker2`.
+
+  **At a glance**
+  - Chart: `strimzi-kafka-operator` 1.3.0 from `oci://quay.io/strimzi-helm/strimzi-kafka-operator`
+  - Installs into: namespace `kafka`, one instance per cluster
+  - Web UI: none of its own; the Kafka UI entry browses the clusters
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: strimzi-kafka-operator-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: The operator is installed once per cluster
+  into the `kafka` namespace and, as upstream, **watches only its own namespace**: create Kafka
+  clusters in `kafka`.
+
+  **Lab override example** (watch every namespace):
+  ```yaml
+  watchAnyNamespace: true
+  ```
+
+  **First cluster**: apply the upstream single-node KRaft example from the Strimzi quickstart, with the
+  Nutanix CSI `nutanix-volume` storage class for persistent brokers.
+
+  **Links**: [Docs](https://strimzi.io/documentation/) · [Quickstart](https://strimzi.io/quickstarts/) · [Chart](https://github.com/strimzi/strimzi-kafka-operator/tree/main/helm-charts/helm3/strimzi-kafka-operator) · [Default values](https://github.com/strimzi/strimzi-kafka-operator/blob/main/helm-charts/helm3/strimzi-kafka-operator/values.yaml) · [Releases](https://github.com/strimzi/strimzi-kafka-operator/releases)
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHJvbGU9ImltZyIgdmlld0JveD0iMzkuMjggLTEuOTcgMjgxLjk0IDMyMy40NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiIiB4MT0iLTIwMi45MDgiIHgyPSItMjAyLjIxMiIgeTE9Ii0xLjYzMyIgeTI9Ii0xLjYzMyIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSg2NC45NCAtNjEwMjEuNTc1IDk0MzQwLjA5Nykgc2NhbGUoNTk0LjEwMzY2KSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzU0YmFkOCIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJhIj48cGF0aCBmaWxsPSJub25lIiBkPSJNMTgzLjkxNTcyIDExNS42MjkzM2MtNS41NDgxNyA3LjExMjY3LTcwLjk4Mzc4IDIyLjk4OTY3LTEyMy4yNTE5MiA0Ni41Mzk5NXY2Ni44MzVsMTE5LjY3Mzc3IDY5LjA5MzU2IDExOS42NzM3OS02OS4wOTM1NnYtMTMuODgyOTVhNzI1Ljg1NjM3IDcyNS44NTYzNyAwIDAgMC03NS44MDgxNS0xMC4yMjIxOWMtMTA1LjI2NjU3LTkuMDk2NjEtNy43OTY2MS0yOS44OTA4NSAzNi4zODkyLTY3LjE3QzMwNC43NzkxIDEwMC40NDkxNiAxMTMuNzM3MzUgODkuMjM1IDExMy43MzczNSA4OS4yMzVzNzcuOTc1ODMgMTYuMzk3NjQgNzAuMTc4MzIgMjYuMzk0MjkiLz48L2NsaXBQYXRoPjwvZGVmcz48cGF0aCBmaWxsPSIjMTkyYzQ3IiBkPSJNMTgwLjMzODI3IDQuMzI1NTNMNDUuNTk4NzkgODIuMTE2ODl2MTU1LjU4NTQ4TDE4MC4zMzgyNyAzMTUuNDkzbDEzNC43NDAxOC03Ny43OTEzNlY4Mi4xMTY4OXoiLz48ZyBjbGlwLXBhdGg9InVybCgjYSkiPjxwYXRoIGZpbGw9InVybCgjYikiIGQ9Ik0xODMuOTE1NzIgMTE1LjYyOTMzYy01LjU0ODE3IDcuMTEyNjctNzAuOTgzNzggMjIuOTg5NjctMTIzLjI1MTkyIDQ2LjUzOTk1djY2LjgzNWwxMTkuNjczNzcgNjkuMDkzNTYgMTE5LjY3Mzc5LTY5LjA5MzU2di0xMy44ODI5NWE3MjUuODU2MzcgNzI1Ljg1NjM3IDAgMCAwLTc1LjgwODE1LTEwLjIyMjE5Yy0xMDUuMjY2NTctOS4wOTY2MS03Ljc5NjYxLTI5Ljg5MDg1IDM2LjM4OTItNjcuMTdDMzA0Ljc3OTEgMTAwLjQ0OTE2IDExMy43MzczNSA4OS4yMzUgMTEzLjczNzM1IDg5LjIzNXM3Ny45NzU4MyAxNi4zOTc2NCA3MC4xNzgzMiAyNi4zOTQyOSIvPjwvZz48L3N2Zz4=

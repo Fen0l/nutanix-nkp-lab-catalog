@@ -1,0 +1,58 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Envoy Gateway
+description: >-
+  Kubernetes Gateway API implementation based on Envoy proxy (CNCF). Generic edition; the Nutanix
+  product catalog ships the NAI-tuned variant. Installs into namespace envoy-gateway-system. No web
+  UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - api-gateway
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://gateway.envoyproxy.io/docs/
+dependencies: []
+overview: |
+  ## Envoy Gateway
+
+  Envoy Gateway manages Envoy proxies as a Gateway API implementation: `GatewayClass`,
+  `Gateway`, `HTTPRoute`, `GRPCRoute`, plus Envoy extensions (`SecurityPolicy`,
+  `BackendTrafficPolicy`, `ClientTrafficPolicy`).
+
+  **At a glance**
+  - Chart: `gateway-helm` 1.9.2 from `oci://docker.io/envoyproxy/gateway-helm`
+  - Installs into: namespace `envoy-gateway-system`, one instance per cluster
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: envoy-gateway-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Installed once per cluster into
+  `envoy-gateway-system`.
+
+  **Example**
+  ```yaml
+  apiVersion: gateway.networking.k8s.io/v1
+  kind: GatewayClass
+  metadata: { name: eg }
+  spec: { controllerName: gateway.envoyproxy.io/gatewayclass-controller }
+  ```
+
+  **NKP 2.18 notes**
+  - The upstream chart bundles the Gateway API CRDs (v1.6.1) and Flux applies them with `CreateReplace`, which **upgrades the CRDs installed by the NKP platform application `gateway-api-crds` (v1.3.0) in place**. Envoy Gateway and the existing platform app both kept working on the lab cluster. Keep this in mind for NKP upgrades (the platform app will meet newer CRDs than it ships) and for NGINX Gateway Fabric, which requires Gateway API v1.6 and therefore works on NKP 2.18 only after these CRDs are upgraded.
+  - The Nutanix product catalog contains `envoy-gateway-nai`, a variant tuned for Nutanix Enterprise AI.
+
+  **Links**: [Docs](https://gateway.envoyproxy.io/docs/) · [Chart](https://github.com/envoyproxy/gateway/tree/main/charts/gateway-helm) · [Default values](https://github.com/envoyproxy/gateway/blob/main/charts/gateway-helm/values.yaml) · [Releases](https://github.com/envoyproxy/gateway/releases)
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHJvbGU9ImltZyIgdmlld0JveD0iLTQuMjEgNDkuNTQgNDM5LjkyIDMzMi42NyI+PHN0eWxlPnN2ZyB7ZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0MzIgNDMyfTwvc3R5bGU+PHBhdGggZmlsbD0iI2IzMWFhYiIgZD0iTTEwOS44IDIxMC42bC42IDI1LjQgMjYuOCAxNi42LS42LTI1LjR6bTY1LjQgMTA1LjhsLS42LTI0LjktMjMuNS0xNC42Yy0uMy0uMi0uNy0uNS0xLS43bC42IDI1IDI0LjUgMTUuMnpNOTEuNSAzNTBsLTYxLjMtMzgtMS41LTYzLjcgMzAuMS0xMy0uNi0yNS41LTQ4IDIwLjdjLTMuNyAxLjYtNS45IDUtNS44IDguOWwxLjggNzYuNWMuMSAzLjkgMi41IDcuOCA2LjMgMTAuMkw4NiAzNzEuN2MzLjQgMi4xIDcuNiAyLjcgMTEgMS42LjQtLjEuNy0uMiAxLS40bDQ1LjEtMTkuNC0yNC41LTE1LjJMOTEuNSAzNTB6Ii8+PHBhdGggZmlsbD0iI2QxNjNjZSIgZD0iTTI4OS42IDIwOS4xYy0uMS00LjYtMi45LTkuMS03LjMtMTEuOUwxOTMgMTQxLjlsLTIuOCAxLjIuNiAyNi44IDcwLjcgNDMuOCAxLjcgNzEuNiAyNyAxNi43IDEuNS0uNi0yLjEtOTIuM3pNMTgyLjcgMzM0LjhsLTgyLjktNTEuNC0yLTg2LjMgMzcuOC0xNi4zLS43LTI5LjctNTguNyAyNS4zYy00LjMgMS45LTYuOSA1LjgtNi44IDEwLjRMNzEuNyAyODhjLjEgNC42IDIuOSA5LjEgNy4zIDExLjhsOTcuMiA2MC4zYzQgMi41IDguOCAzLjEgMTIuOSAxLjkuNC0uMS44LS4zIDEuMi0uNWw1Ny40LTI0LjctMjguNi0xNy43LTM2LjQgMTUuN3oiLz48cGF0aCBmaWxsPSIjZTEzZWFmIiBkPSJNNDE1LjkgMTM4LjNMMjkxLjMgNjFjLTQuNi0yLjgtMTAuMS0zLjYtMTQuOC0yLjEtLjUuMS0uOS4zLTEuNC41bC0xMjEuNiA1Mi40Yy00LjkgMi4xLTcuOSA2LjYtNy44IDExLjlsMy4xIDEyOS42Yy4xIDUuMyAzLjMgMTAuNCA4LjQgMTMuNUwyODEuOCAzNDRjNC42IDIuOCAxMC4xIDMuNiAxNC43IDIuMS41LS4xLjktLjMgMS40LS41bDEyMS42LTUyLjRjNC45LTIuMSA3LjktNi43IDcuOC0xMS45bC0zLTEyOS42Yy0uMS01LjEtMy4zLTEwLjMtOC40LTEzLjR6TTI4OS4zIDMxNS4yTDE4MSAyNDguMWwtMi43LTExMi43IDEwNS42LTQ1LjVMMzkyLjIgMTU3bDIuNyAxMTIuNy0xMDUuNiA0NS41eiIvPjwvc3ZnPg==

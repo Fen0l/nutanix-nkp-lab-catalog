@@ -1,0 +1,58 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: vCluster
+description: >-
+  A virtual Kubernetes cluster running inside a namespace: full API server for teams, CI or demos
+  without new VMs. One instance per deployment. One instance per AppDeployment, each in its own
+  namespace. No web UI.
+type: custom
+allowMultipleInstances: true
+category:
+  - developer-tools
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - project
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://www.vcluster.com/docs
+dependencies: []
+overview: |
+  ## vCluster
+
+  vCluster (Loft, CNCF sandbox) runs a complete virtual Kubernetes control plane inside a
+  namespace of the host cluster. Pods are scheduled on the host cluster; the virtual cluster has
+  its own API server, CRDs and RBAC. Ideal for ephemeral environments, CI and training labs
+  without creating NKP workload clusters.
+
+  **At a glance**
+  - Chart: `vcluster` 0.37.3, mirrored unchanged from https://charts.loft.sh to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/vcluster`
+  - Installs into: one instance per AppDeployment, each in its own namespace
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: vcluster-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Upstream defaults (k8s distro, embedded database backing
+  store, persistent volume). Each AppDeployment is one virtual cluster, in its own namespace.
+
+  **Connect**
+  ```
+  vcluster connect <instance> -n <namespace>   # vcluster CLI, opens a kubeconfig context
+  ```
+
+  **NKP 2.18 notes**
+  - The chart uses the chart version as the syncer image tag. NKP 2.18 runs helm-controller with `DisableChartDigestTracking=true`, so the tag is `0.37.3`; on a Flux that tracks chart digests the tag becomes `0.37.3+<digest>`, an invalid image reference.
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://charts.loft.sh); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://www.vcluster.com/docs) · [Chart](https://github.com/loft-sh/vcluster/tree/main/chart) · [Default values](https://github.com/loft-sh/vcluster/blob/main/chart/values.yaml) · [Releases](https://github.com/loft-sh/vcluster/releases)
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0Ij48cG9seWdvbiBwb2ludHM9IjMyLDQgNTYsMTggNTYsNDYgMzIsNjAgOCw0NiA4LDE4IiBmaWxsPSIjNGIyYjljIi8+PHBvbHlnb24gcG9pbnRzPSIzMiwxNCA0NiwyMiA0NiwzOCAzMiw0NiAxOCwzOCAxOCwyMiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45Ii8+PHBvbHlnb24gcG9pbnRzPSIzMiwyMiAzOCwyNS41IDM4LDMyLjUgMzIsMzYgMjYsMzIuNSAyNiwyNS41IiBmaWxsPSIjNGIyYjljIi8+PC9zdmc+Cg==

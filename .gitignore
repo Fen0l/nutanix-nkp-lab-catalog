@@ -1,0 +1,15 @@
+# Build outputs
+*.tar
+artifacts.yaml
+.local/
+# Go test binaries / caches
+apptests/suites.test
+apptests/*.test
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+# Local secrets
+.env
+.env.local
+apptests/suites/tmp-kind-hack-scripts/

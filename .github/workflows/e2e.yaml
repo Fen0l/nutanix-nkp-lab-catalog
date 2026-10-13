@@ -1,0 +1,94 @@
+name: E2E install tests
+
+# Install applications on a kind cluster with the NKP Flux settings and wait for Ready:
+# changed applications on pull requests, all of them on main, weekly and on demand.
+
+on:
+  pull_request:
+    paths: ["applications/**", "apptests/**", ".github/workflows/e2e.yaml"]
+  push:
+    branches: [main]
+    paths: ["applications/**", "apptests/**"]
+  schedule:
+    - cron: "0 5 * * 1" # weekly, Monday 05:00 UTC
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Application (blank = all)"
+        required: false
+        type: string
+      version:
+        description: "Version (blank = latest directory)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  matrix:
+    name: Select applications
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.select.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: select
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_APP: ${{ inputs.app }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${INPUT_APP}" ]]; then
+            apps="${INPUT_APP}"
+          elif [[ "${EVENT}" == "pull_request" ]]; then
+            apps="$(git diff --name-only "${BASE_SHA}" HEAD -- applications | awk -F/ 'NF>2 {print $2}' | sort -u | tr '\n' ' ')"
+            if [[ -z "${apps// }" ]]; then apps="podinfo"; fi
+          else
+            apps="$(ls applications | tr '\n' ' ')"
+          fi
+          json="$(printf '%s\n' ${apps} | jq -R . | jq -cs .)"
+          echo "apps=${json}" >> "$GITHUB_OUTPUT"
+          echo "Testing: ${apps}"
+
+  install:
+    name: ${{ matrix.app }}
+    needs: matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.matrix.outputs.apps) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: apptests/go.mod
+          cache-dependency-path: apptests/go.sum
+
+      - name: Install application on kind and wait for Ready
+        working-directory: apptests
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: |
+          go test ./suites/ -v -count=1 -timeout=35m \
+            -app="${{ matrix.app }}" -app-version="${APP_VERSION}"
+
+      - name: Collect diagnostics on failure
+        if: failure()
+        run: |
+          docker ps -a || true
+          for c in $(docker ps --format '{{.Names}}' | grep -- '-control-plane' || true); do
+            echo "== containers on $c"; docker exec "$c" crictl ps -a 2>/dev/null | tail -40 || true
+          done

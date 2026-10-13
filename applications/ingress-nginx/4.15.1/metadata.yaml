@@ -1,0 +1,54 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: NGINX Ingress Controller
+description: >-
+  The Kubernetes community ingress-nginx controller. Adds the `nginx` IngressClass next to the NKP
+  Traefik; gets its own MetalLB address. Installs into namespace ingress-nginx. No web UI.
+type: custom
+allowMultipleInstances: false
+category:
+  - networking
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://kubernetes.github.io/ingress-nginx/
+dependencies: []
+overview: |
+  ## NGINX Ingress Controller
+
+  `ingress-nginx` is the Kubernetes community ingress controller, the most widely deployed one.
+  NKP ships Traefik as the platform ingress (`kommander-traefik`); this entry adds a second
+  controller with the IngressClass **`nginx`** for workloads or customers that standardise on it.
+
+  **At a glance**
+  - Chart: `ingress-nginx` 4.15.1, mirrored unchanged from https://kubernetes.github.io/ingress-nginx to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/ingress-nginx`
+  - Installs into: namespace `ingress-nginx`, one instance per cluster
+  - Web UI: none (operator / controller)
+
+  **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata: { name: ingress-nginx-config-overrides, namespace: <workspace namespace> }
+  data:
+    values.yaml: |
+      # chart values, see the default values link below
+  ```
+
+  **Defaults worth knowing**: Service of type LoadBalancer (MetalLB
+  assigns an address), IngressClass `nginx`, not the cluster default, admission webhook on.
+  Installed once per cluster into `ingress-nginx`.
+
+  **Use it**: `kubectl -n ingress-nginx get svc ingress-nginx-controller` for the address, then
+  `spec.ingressClassName: nginx` on your Ingress objects.
+
+  **NKP 2.18 notes**
+  - The controller Service takes a second LoadBalancer address from MetalLB next to the NKP Traefik; make sure the MetalLB pool has one free.
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://kubernetes.github.io/ingress-nginx); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://kubernetes.github.io/ingress-nginx/) · [Chart](https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx) · [Default values](https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/values.yaml) · [Releases](https://github.com/kubernetes/ingress-nginx/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+TkdJTlg8L3RpdGxlPjxwYXRoIGQ9Ik0xMiAwTDEuNjA1IDZ2MTJMMTIgMjRsMTAuMzk1LTZWNkwxMiAwem02IDE2LjU5YzAgLjcwNS0uNjQ2IDEuMjktMS41MjkgMS4yOS0uNjMxIDAtMS4zNTEtLjI1NS0xLjgwMS0uODFsLTYtNy4xNDF2Ni42NmMwIC43MjEtLjU3IDEuMjktMS4yNzQgMS4yOUg3LjMyYy0uNzIxIDAtMS4yOS0uNi0xLjI5LTEuMjlWNy40MWMwLS43MDUuNjMtMS4yOSAxLjUtMS4yOS42NDYgMCAxLjM4LjI1NSAxLjgzLjgxbDUuOTcgNy4xNDFWNy40MWMwLS43MjEuNi0xLjI5IDEuMjktMS4yOWguMDc1Yy43MiAwIDEuMjkuNiAxLjI5IDEuMjl2OS4xOEgxOHoiLz48L3N2Zz4=

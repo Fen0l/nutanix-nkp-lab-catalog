@@ -1,0 +1,50 @@
+name: Mirror HTTP-only charts to GHCR
+
+# Mirror HTTP-only upstream charts (applications/<app>/.catalog-source.yaml) to
+# oci://ghcr.io/<owner>/nutanix-nkp-lab-catalog/charts/<chart>:<version>, every version directory.
+
+on:
+  push:
+    branches: [main]
+    paths: ["applications/**/.catalog-source.yaml", "applications/**/helmrelease/helmrelease.yaml", "scripts/mirror-chart.sh", ".github/workflows/mirror-charts.yaml"]
+  pull_request:
+    paths: ["applications/**/.catalog-source.yaml"]
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "Application (blank = all mirrored apps)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  mirror:
+    name: Mirror charts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Mirror (skips tags that already exist)
+        env:
+          INPUT_APP: ${{ inputs.app }}
+          OCI_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/nutanix-nkp-lab-catalog/charts
+        run: |
+          set -euo pipefail
+          export OCI_REGISTRY="$(echo "$OCI_REGISTRY" | tr '[:upper:]' '[:lower:]')"
+          for src in applications/*/.catalog-source.yaml; do
+            app="$(basename "$(dirname "$src")")"
+            [[ -n "${INPUT_APP}" && "${INPUT_APP}" != "$app" ]] && continue
+            repo="$(yq -r '.helmrepoUrl' "$src")"; chart="$(yq -r '.chart' "$src")"
+            for vdir in applications/"$app"/*/; do
+              ver="$(yq -r 'select(.kind == "OCIRepository") | .spec.ref.tag' "$vdir/helmrelease/helmrelease.yaml" | head -1)"
+              echo "== $app: $chart $ver from $repo"
+              scripts/mirror-chart.sh "$repo" "$chart" "$ver"
+            done
+          done

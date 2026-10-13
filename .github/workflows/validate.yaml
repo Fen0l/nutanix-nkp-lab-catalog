@@ -1,0 +1,37 @@
+name: Validate catalog
+
+on:
+  pull_request:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+env:
+  NKP_VERSION: "2.18.0"
+
+jobs:
+  validate:
+    name: nkp validate catalog-repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nkp CLI
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://downloads.d2iq.com/dkp/v${NKP_VERSION}/nkp_v${NKP_VERSION}_linux_amd64.tar.gz" | tar -xz -C /tmp nkp
+          sudo install -m 0755 /tmp/nkp /usr/local/bin/nkp
+          nkp version
+
+      - name: Validate metadata, manifests and chart references
+        run: nkp validate catalog-repository --repo-dir . -v=1
+
+      - name: Check the UI texts (every cm.yaml value documented, install and UI sentence present)
+        run: scripts/check-overviews.sh
+
+      - name: Dry-run the release build (no push)
+        run: |
+          nkp experimental catalog release --release-spec .release/stable.yaml --repo-dir .
+          ls -la ./*.tar

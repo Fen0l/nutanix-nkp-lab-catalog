@@ -1,0 +1,12 @@
+# Validation-only config for `nkp validate catalog-repository` (bloodhound). Not used at deploy time.
+k8s_versions:
+  - 1.34.0
+  - 1.35.0
+strict: true
+# The chart renders a ScaledObject; the KEDA CRDs come from the KEDA entry (requiredDependencies).
+skip_types:
+  - keda.sh/v1alpha1
+additional_crds: []
+substitution_vars:
+  releaseNamespace: kommander
+  workspaceNamespace: workspace
