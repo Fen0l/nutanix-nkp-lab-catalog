@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): dashboard on; its ingress hostname comes from the UI form
+    # (user-inputs.yaml), because the Rollouts UI has no base-href support for sub-paths.
+    dashboard:
+      enabled: true
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
