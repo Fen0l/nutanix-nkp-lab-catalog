@@ -23,6 +23,8 @@ jobs:
       outdated: ${{ steps.check.outputs.outdated }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BUMP_TOKEN || github.token }}
       - uses: azure/setup-helm@v4
 
       - name: Check versions
