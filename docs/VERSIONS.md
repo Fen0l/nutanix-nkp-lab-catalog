@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-10-13 15:24 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-10-13 17:07 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -25,13 +25,13 @@ the daily workflow opens one pull request per outdated application.
 | jenkins | 5.9.68 | 5.9.68 | 2.580.1 | up-to-date | `oci://ghcr.io/jenkinsci/helm-charts/jenkins` |
 | k6-operator | 4.6.0 | 4.6.0 | 1.6.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/k6-operator` |
 | kafka-ui | 1.6.5 | 1.6.5 | v1.5.0 | up-to-date | `https://ui.charts.kafbat.io (kafka-ui, mirrored)` |
-| keda | 2.21.0 | 2.21.0 | 2.21.0 | up-to-date | `https://kedacore.github.io/charts (keda, mirrored)` |
 | keda-add-ons-http | 0.16.0 | 0.16.0 | 0.16.0 | up-to-date | `https://kedacore.github.io/charts (keda-add-ons-http, mirrored)` |
+| keda | 2.21.0 | 2.21.0 | 2.21.0 | up-to-date | `https://kedacore.github.io/charts (keda, mirrored)` |
 | keycloak | 7.3.2 | 7.3.2 | 26.7.4 | up-to-date | `https://codecentric.github.io/helm-charts (keycloakx, mirrored)` |
 | kubescape-operator | 1.40.5 | 1.40.5 | 1.40.5 | up-to-date | `https://kubescape.github.io/helm-charts (kubescape-operator, mirrored)` |
 | kured | 6.1.0 | 6.1.0 | 1.23.0 | up-to-date | `oci://ghcr.io/kubereboot/charts/kured` |
-| kyverno | 3.9.1 | 3.9.1 | v1.19.1 | up-to-date | `oci://ghcr.io/kyverno/charts/kyverno` |
 | kyverno-policies | 3.9.1 | 3.9.1 | v1.19.1 | up-to-date | `oci://ghcr.io/kyverno/charts/kyverno-policies` |
+| kyverno | 3.9.1 | 3.9.1 | v1.19.1 | up-to-date | `oci://ghcr.io/kyverno/charts/kyverno` |
 | litmus | 3.30.0 | 3.30.0 | 3.30.0 | up-to-date | `oci://ghcr.io/litmuschaos/litmus-helm/litmus` |
 | mongodb-community-operator | 0.13.0 | 0.13.0 | 0.13.0 | up-to-date | `https://mongodb.github.io/helm-charts (community-operator, mirrored)` |
 | nginx-gateway-fabric | 2.7.2 | 2.7.2 | 2.7.2 | up-to-date | `oci://ghcr.io/nginx/charts/nginx-gateway-fabric` |
