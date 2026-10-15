@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): the UI and both report plugins on; the UI hostname
+    # comes from the form at enable time (no sub-path support upstream).
+    ui:
+      enabled: true
+    plugin:
+      kyverno:
+        enabled: true
+      trivy:
+        enabled: true
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
