@@ -1,0 +1,41 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: ${releaseName}-chart
+  namespace: ${releaseNamespace}
+spec:
+  interval: 6h0m0s
+  ref:
+    tag: 2.8.0
+  url: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
+  # Pull only the chart layer; some registries attach provenance/signature layers.
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nginx-gateway-fabric
+  namespace: ${releaseNamespace}
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: ${releaseName}-chart
+    namespace: ${releaseNamespace}
+  install:
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: 30
+  interval: 15s
+  releaseName: nginx-gateway-fabric
+  targetNamespace: nginx-gateway
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 30
+  valuesFrom:
+  - kind: ConfigMap
+    name: ${releaseName}-config-defaults
+---
