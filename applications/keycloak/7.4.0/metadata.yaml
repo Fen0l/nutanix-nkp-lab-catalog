@@ -1,0 +1,81 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Keycloak
+description: >-
+  Open-source identity and access management: OIDC/SAML provider, user federation (LDAP/AD), social
+  login. Lab mode with an embedded database. Installs into namespace keycloak. Web UI at /keycloak/ on
+  the cluster ingress.
+type: custom
+allowMultipleInstances: false
+category:
+  - security
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://www.keycloak.org/documentation
+dependencies: []
+upgradesFrom: "7.3.2"
+overview: |
+  ## Keycloak
+
+  Keycloak is the reference open-source identity provider: OpenID Connect and SAML, realms,
+  user federation with LDAP/Active Directory, social logins, fine-grained authorization. Use
+  it as an OIDC provider for applications in the lab, or in front of the NKP Dex.
+
+  **At a glance**
+  - Chart: `keycloakx` 7.4.0, mirrored unchanged from https://codecentric.github.io/helm-charts to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/keycloakx`
+  - Installs into: namespace `keycloak`, one instance per cluster
+  - Web UI: `https://<cluster ingress>/keycloak/` (dashboard card on the cluster page)
+
+  **Changes from upstream**: the values this entry sets on top of the chart defaults. Override them with a `keycloak-config-overrides` ConfigMap (key `values.yaml`) referenced in the AppDeployment `spec.configOverrides`.
+  ```yaml
+  # --- NKP integration (lab catalog). The keycloakx chart is a bare chart: it needs a start
+  # command, a database and an admin account to run at all (see the chart README quickstart).
+  command:
+    - /opt/keycloak/bin/kc.sh
+    - start
+    - --http-port=8080
+    - --hostname-strict=false
+  http:
+    relativePath: /keycloak        # served natively under /keycloak on the NKP Traefik
+  database:
+    vendor: dev-file               # lab: embedded H2 on the pod filesystem (not for production)
+  proxy:
+    mode: xforwarded               # the NKP Traefik sends X-Forwarded-* headers (chart default: forwarded)
+  extraEnv: |
+    - name: KC_BOOTSTRAP_ADMIN_USERNAME
+      value: admin
+    - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+      value: admin
+    - name: JAVA_OPTS_APPEND
+      value: -Djgroups.dns.query={{ include "keycloak.fullname" . }}-headless
+  ingress:
+    enabled: true
+    ingressClassName: kommander-traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    rules:
+      - host: ""
+        paths:
+          - path: /keycloak/
+            pathType: Prefix
+  ```
+
+  **Defaults worth knowing**: Keycloak started in production mode
+  behind the NKP Traefik at `/keycloak`, embedded `dev-file` database on the pod filesystem,
+  bootstrap admin `admin` / `admin`. Point `database.*` at PostgreSQL (CloudNativePG is an NKP
+  platform application) and change the admin password before any real use.
+
+  **Access**: `https://<cluster ingress>/keycloak/` (admin console under `/keycloak/admin/`),
+  dashboard card on the cluster page.
+
+  **NKP 2.18 notes**
+  - `dev-file` keeps the database on the pod filesystem (no volume): realms and users are lost when the pod is recreated. Point `database.*` at PostgreSQL (CloudNativePG is an NKP platform application) and change `admin` / `admin` before any real use.
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://codecentric.github.io/helm-charts); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://www.keycloak.org/documentation) · [Chart](https://github.com/codecentric/helm-charts/tree/master/charts/keycloakx) · [Default values](https://github.com/codecentric/helm-charts/blob/master/charts/keycloakx/values.yaml) · [Releases](https://github.com/codecentric/helm-charts/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+S2V5Y2xvYWs8L3RpdGxlPjxwYXRoIGQ9Im0xOC43NDIgMS4xODItMTIuNDkzLjAwMkM0LjE1NSA0Ljc4NCAyLjA3OSA4LjM5MyAwIDEyLjAwMmMyLjA3MSAzLjYxMiA0LjE2MiA3LjIxNCA2LjI1MiAxMC44MTZsMTIuNDktLjAwNCAzLjA4OS01LjQwNGgyLjE1OHYtLjAwMkgyNEwyMy45OTYgNi41OWgtMi4xNjh6TTguMzI3IDQuNzkyaDIuMDgxbDEuMDQgMS44LTMuMTIgNS40MTMgMy4xMTcgNS40MDMtMS4wMzUgMS44MUg4LjMyN2EyMDQ3LjU2NiAyMDQ3LjU2NiAwIDAgMC00LjE2OC03LjIwNEM1LjU0NyA5LjYwNiA2LjkzNyA3LjIgOC4zMjcgNC43OTJabTYuMjQxIDAgMi4wODYuMDAzYzEuMzkzIDIuNDA1IDIuNzggNC44MTMgNC4xNjYgNy4yMjJsLTQuMTY3IDcuMmgtMi4wOGMtLjM4Mi0uNTYyLTEuMDM4LTEuODA4LTEuMDM4LTEuODA4bDMuMTIzLTUuNDA1LTMuMTI0LTUuNDEzeiIvPjwvc3ZnPg==
