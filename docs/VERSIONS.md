@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-10-17 10:19 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-10-18 10:35 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
