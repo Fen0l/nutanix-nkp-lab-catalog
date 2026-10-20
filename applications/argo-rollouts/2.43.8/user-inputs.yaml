@@ -1,0 +1,49 @@
+schema: catalog.nkp.nutanix.com/v1/application-user-inputs
+# Declarative input form shown by the NKP UI when enabling the application (NKP 2.18+).
+# argo-rollouts's web UI needs its own hostname (no sub-path support upstream). The form asks for the
+# cluster's ingress domain and serves the UI at rollouts.<domain> on the NKP Traefik, rendering the chart
+# overrides and the NKP dashboard card.
+groups:
+  - name: exposure
+    label: Web UI
+    description: >-
+      Expose the Argo Rollouts on the cluster's NKP ingress (Traefik) as rollouts.<ingress domain>.
+      Use the cluster's ingress domain (for example nkp.example.com) with a wildcard DNS
+      record *.<domain> pointing at the Traefik address, or <traefik-ip>.nip.io when no DNS is available.
+    collapse: false
+    fields:
+      - name: ingressDomain
+        label: Ingress domain
+        type: string
+        description: Cluster ingress domain; the UI is served at rollouts.<domain> (needs *.<domain> -> Traefik).
+        required: true
+        default: ""
+resources:
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: argo-rollouts-config-overrides
+      data:
+        values.yaml: |
+          dashboard:
+            enabled: true
+            ingress:
+              enabled: true
+              ingressClassName: kommander-traefik
+              annotations:
+                traefik.ingress.kubernetes.io/router.tls: "true"
+              hosts:
+                - rollouts.{{ ingressDomain }}
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: argo-rollouts-app-dashboard-info
+        labels:
+          kommander.d2iq.io/application: argo-rollouts
+      data:
+        name: Argo Rollouts
+        dashboardLink: https://rollouts.{{ ingressDomain }}/rollouts/
+        docsLink: https://argo-rollouts.readthedocs.io/
+        version: "2.43.8"
