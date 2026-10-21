@@ -33,7 +33,7 @@ fi
 [[ -n "$ns" ]] && yq -i "(select(.kind == \"HelmRelease\") | .spec.targetNamespace) = \"${ns}\"" "$hr"
 
 meta="applications/${app}/${version}/metadata.yaml"
-yq -i '.type = "custom" | .nkpVersionSupport = ">=2.18.0"' "$meta"
+yq -i '.type = "custom" | .nkpVersionSupport = ">=2.19.0"' "$meta"
 $multi || yq -i '.allowMultipleInstances = false | .scope = ["workspace"]' "$meta"
 
 echo "Scaffolded applications/${app}/${version}. Now edit:"

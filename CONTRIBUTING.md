@@ -22,7 +22,7 @@ for the people who deploy it with one click.
 6. **Every entry is tested.** `nkp validate catalog-repository` must pass and the kind install test
    (`cd apptests && go test ./suites/ -v -app=<app>`) must reach Ready. Add prerequisites for the kind
    cluster in `apptests/catalog/prereqs.go` when the app needs CRDs from another entry. The kind
-   cluster runs the Flux release line of NKP 2.18 (`apptests/catalog/flux.go`, `FLUX_VERSION` to
+   cluster runs the Flux release line of NKP 2.19, unchanged since 2.18 (`apptests/catalog/flux.go`, `FLUX_VERSION` to
    test another one).
 
 ## Adding an application
@@ -46,7 +46,7 @@ Then fill in:
     block of `cm.yaml`, comments included, so it can be copied into an override ConfigMap; an empty
     override example when the chart runs unchanged) ·
     **Defaults worth knowing** · **Access** · **Requires** / **Works with** · hands-on sections
-    (**Try it**, **Example**, **Lab override example**) · **NKP 2.18 notes** (verified behaviour on
+    (**Try it**, **Example**, **Lab override example**) · **NKP 2.19 notes** (verified behaviour on
     NKP, not upstream folklore) · **Chart source** (mirrored charts) · **Links** (docs, chart, default
     values, releases).
   `scripts/check-overviews.sh` (run by `scripts/validate.sh`) fails when a value set in `cm.yaml`

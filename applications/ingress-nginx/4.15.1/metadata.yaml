@@ -45,7 +45,7 @@ overview: |
   **Use it**: `kubectl -n ingress-nginx get svc ingress-nginx-controller` for the address, then
   `spec.ingressClassName: nginx` on your Ingress objects.
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - The controller Service takes a second LoadBalancer address from MetalLB next to the NKP Traefik; make sure the MetalLB pool has one free.
 
   **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://kubernetes.github.io/ingress-nginx); this catalog mirrors the unmodified tarball to OCI.

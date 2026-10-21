@@ -52,7 +52,7 @@ overview: |
   defaults use `server.authModes: [server]`, so the UI opens without a token; switch to
   `[client]` or `[sso]` for anything beyond a lab.
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - The `StripPrefix` middleware is created in the `argo` namespace because NKP Traefik does not allow cross-namespace middleware references; keep the `argo` namespace or adapt the `router.middlewares` annotation.
 
   **Links**: [Docs](https://argo-workflows.readthedocs.io/) · [Chart](https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows) · [Default values](https://github.com/argoproj/argo-helm/blob/main/charts/argo-workflows/values.yaml) · [Releases](https://github.com/argoproj/argo-helm/releases)

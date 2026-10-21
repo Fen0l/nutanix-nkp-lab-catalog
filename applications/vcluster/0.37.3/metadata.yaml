@@ -49,8 +49,8 @@ overview: |
   vcluster connect <instance> -n <namespace>   # vcluster CLI, opens a kubeconfig context
   ```
 
-  **NKP 2.18 notes**
-  - The chart uses the chart version as the syncer image tag. NKP 2.18 runs helm-controller with `DisableChartDigestTracking=true`, so the tag is `0.37.3`; on a Flux that tracks chart digests the tag becomes `0.37.3+<digest>`, an invalid image reference.
+  **NKP 2.19 notes**
+  - The chart uses the chart version as the syncer image tag. NKP 2.19 runs helm-controller with `DisableChartDigestTracking=true`, so the tag is `0.37.3`; on a Flux that tracks chart digests the tag becomes `0.37.3+<digest>`, an invalid image reference.
 
   **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://charts.loft.sh); this catalog mirrors the unmodified tarball to OCI.
 

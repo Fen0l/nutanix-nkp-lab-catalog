@@ -50,8 +50,8 @@ overview: |
   spec: { controllerName: gateway.envoyproxy.io/gatewayclass-controller }
   ```
 
-  **NKP 2.18 notes**
-  - The upstream chart bundles the Gateway API CRDs (v1.6.1) and Flux applies them with `CreateReplace`, which **upgrades the CRDs installed by the NKP platform application `gateway-api-crds` (v1.3.0) in place**. Envoy Gateway and the existing platform app both kept working on the lab cluster. Keep this in mind for NKP upgrades (the platform app will meet newer CRDs than it ships) and for NGINX Gateway Fabric, which requires Gateway API v1.6 and therefore works on NKP 2.18 only after these CRDs are upgraded.
+  **NKP 2.19 notes**
+  - The upstream chart bundles the Gateway API CRDs (v1.6.1) and Flux applies them with `CreateReplace`, which **upgrades the CRDs installed by the NKP platform application `gateway-api-crds` (v1.3.0) in place**. Envoy Gateway and the existing platform app both kept working on the lab cluster. Keep this in mind for NKP upgrades (the platform app will meet newer CRDs than it ships) and for NGINX Gateway Fabric, which requires Gateway API v1.6 and therefore works on NKP 2.19 only after these CRDs are upgraded.
   - The Nutanix product catalog contains `envoy-gateway-nai`, a variant tuned for Nutanix Enterprise AI.
 
   **Links**: [Docs](https://gateway.envoyproxy.io/docs/) · [Chart](https://github.com/envoyproxy/gateway/tree/main/charts/gateway-helm) · [Default values](https://github.com/envoyproxy/gateway/blob/main/charts/gateway-helm/values.yaml) · [Releases](https://github.com/envoyproxy/gateway/releases)

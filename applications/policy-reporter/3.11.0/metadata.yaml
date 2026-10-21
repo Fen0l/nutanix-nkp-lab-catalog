@@ -77,7 +77,7 @@ overview: |
   **Requires**: Kyverno (provides the PolicyReport API) and Trivy Operator, both in this catalog; the
   plugins for both are enabled by default.
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - The `PolicyReport` API comes from Kyverno; without it the UI is empty and the plugins fail, hence both hard dependencies.
 
   **Links**: [Docs](https://kyverno.github.io/policy-reporter/) · [Chart](https://github.com/kyverno/policy-reporter/tree/main/charts/policy-reporter) · [Default values](https://github.com/kyverno/policy-reporter/blob/main/charts/policy-reporter/values.yaml) · [Releases](https://github.com/kyverno/policy-reporter/releases)

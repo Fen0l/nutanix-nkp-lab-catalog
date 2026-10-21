@@ -68,8 +68,8 @@ overview: |
             pathType: Prefix
   ```
 
-  **NKP 2.18 notes**
-  - The chart writes the chart version into the `app.kubernetes.io/version` label. NKP 2.18 runs helm-controller with `DisableChartDigestTracking=true`, so the label is `3.30.0` and the install succeeds; on a Flux that tracks chart digests the version becomes `3.30.0+<digest>` and the install fails on label validation.
+  **NKP 2.19 notes**
+  - The chart writes the chart version into the `app.kubernetes.io/version` label. NKP 2.19 runs helm-controller with `DisableChartDigestTracking=true`, so the label is `3.30.0` and the install succeeds; on a Flux that tracks chart digests the version becomes `3.30.0+<digest>` and the install fails on label validation.
 
   **Links**: [Docs](https://docs.litmuschaos.io/) · [ChaosHub](https://hub.litmuschaos.io/) · [Chart](https://github.com/litmuschaos/litmus-helm/tree/master/charts/litmus) · [Default values](https://github.com/litmuschaos/litmus-helm/blob/master/charts/litmus/values.yaml) · [Releases](https://github.com/litmuschaos/litmus-helm/releases)
 icon: PHN2ZyB3aWR0aD0iMTE3IiBoZWlnaHQ9IjE0NyIgdmlld0JveD0iMCAwIDExNyAxNDciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTE3IDBIMFYxMzUuOTc1QzAgMTQyLjA2NCA0LjkxMDg3IDE0NyAxMC45Njg3IDE0N0gxMDYuMDMxQzExMi4wODkgMTQ3IDExNyAxNDIuMDY0IDExNyAxMzUuOTc1VjBaIiBmaWxsPSIjODc4RURFIi8+CjxwYXRoIGQ9Ik0xNy43MjY2IDI2LjY0NDVDMTcuNzI2NiAyMi4yMjYzIDIxLjMwODMgMTguNjQ0NSAyNS43MjY2IDE4LjY0NDVIMjcuNDUzOEMzMS44NzIxIDE4LjY0NDUgMzUuNDUzOCAyMi4yMjYzIDM1LjQ1MzggMjYuNjQ0NVY1OS44MTM1SDE3LjcyNjZWMjYuNjQ0NVoiIGZpbGw9IiM1QTQ0QkEiLz4KPHBhdGggZD0iTTQxLjM2MzMgMTMwLjM4OFYxMTIuNzQ0SDkxLjI3MjRDOTUuNjkwNiAxMTIuNzQ0IDk5LjI3MjQgMTE2LjMyNiA5OS4yNzI0IDEyMC43NDRWMTIyLjM4OEM5OS4yNzI0IDEyNi44MDYgOTUuNjkwNyAxMzAuMzg4IDkxLjI3MjQgMTMwLjM4OEg0MS4zNjMzWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE3LjY5OTIgNjBIMzUuMzk5MlYxMjIuOEMzNS4zOTkyIDEyNy4yMTggMzEuODE3NSAxMzAuOCAyNy4zOTkyIDEzMC44SDI1LjY5OTJDMjEuMjgwOSAxMzAuOCAxNy42OTkyIDEyNy4yMTggMTcuNjk5MiAxMjIuOFY2MFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=

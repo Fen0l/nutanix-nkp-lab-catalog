@@ -63,7 +63,7 @@ overview: |
             - rollouts.<ingress domain>
   ```
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - The Rollouts dashboard cannot run under a sub-path (argo-rollouts issue #1865), which is why this entry asks for an ingress domain and serves `rollouts.<domain>` instead of `/rollouts`.
 
   **Links**: [Docs](https://argo-rollouts.readthedocs.io/) · [Chart](https://github.com/argoproj/argo-helm/tree/main/charts/argo-rollouts) · [Default values](https://github.com/argoproj/argo-helm/blob/main/charts/argo-rollouts/values.yaml) · [Releases](https://github.com/argoproj/argo-helm/releases)

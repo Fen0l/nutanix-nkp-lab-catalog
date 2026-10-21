@@ -25,11 +25,11 @@ const (
 	FluxNamespace = "kommander-flux"
 
 	// DefaultFluxVersion is the flux2 release whose helm-controller matches the one shipped by
-	// NKP 2.18 (helm-controller v1.5.4, source-controller v1.8.x). The upstream harness installs
+	// NKP 2.19 (helm-controller v1.5.4, source-controller v1.8.2, unchanged since 2.18). The upstream harness installs
 	// "latest". Override with FLUX_VERSION (a flux2 tag, or "latest").
 	DefaultFluxVersion = "v2.8.6"
 
-	// helmControllerFeatureGates mirrors the NKP 2.18 helm-controller flags that change how charts
+	// helmControllerFeatureGates mirrors the NKP 2.19 helm-controller flags that change how charts
 	// render. DisableChartDigestTracking stops helm-controller from appending the OCI digest to the
 	// chart version (`0.37.3+755df9…`), which breaks charts that reuse .Chart.Version as a label or
 	// an image tag (LitmusChaos, vCluster). Without it the kind results differ from NKP.

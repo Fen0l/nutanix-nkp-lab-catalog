@@ -5,15 +5,15 @@
 [![Publish](https://github.com/Fen0l/nutanix-nkp-lab-catalog/actions/workflows/publish.yaml/badge.svg)](https://github.com/Fen0l/nutanix-nkp-lab-catalog/actions/workflows/publish.yaml)
 [![Applications](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFen0l%2Fnutanix-nkp-lab-catalog%2Fmain%2Fdocs%2Fbadges%2Fapplications.json)](#applications)
 [![Upstream](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFen0l%2Fnutanix-nkp-lab-catalog%2Fmain%2Fdocs%2Fbadges%2Fupstream.json)](docs/VERSIONS.md)
-[![NKP 2.18](https://img.shields.io/badge/NKP-2.18-7a3ff2)](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_18)
-[![Kubernetes 1.35](https://img.shields.io/badge/Kubernetes-1.35-326ce5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![NKP 2.19](https://img.shields.io/badge/NKP-2.19-7a3ff2)](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_19)
+[![Kubernetes 1.36](https://img.shields.io/badge/Kubernetes-1.36-326ce5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![OCI catalog](https://img.shields.io/badge/catalog-OCI%20%C2%B7%20ghcr.io-orange)](https://github.com/Fen0l/nutanix-nkp-lab-catalog/pkgs/container/nutanix-nkp-lab-catalog%2Fcollection)
 [![License](https://img.shields.io/github/license/Fen0l/nutanix-nkp-lab-catalog)](LICENSE)
 
-44 widely used Kubernetes tools for the **Nutanix Kubernetes Platform (NKP)**, one click away in the
+43 widely used Kubernetes tools for the **Nutanix Kubernetes Platform (NKP)**, one click away in the
 NKP UI. Every entry is the **upstream Helm chart with upstream defaults**; the catalog only adds the
 NKP metadata, the ingress and dashboard card for web UIs, and the few values a chart cannot start
-without. Everything is tested on NKP 2.18 and on kind before it is published.
+without. Everything is tested on NKP 2.19 and on kind before it is published.
 
 > Not an official Nutanix product, not supported by Nutanix or the upstream projects. Labs and demos
 > only. For Nutanix products use the [Nutanix Product Catalog](https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog)
@@ -21,19 +21,19 @@ without. Everything is tested on NKP 2.18 and on kind before it is published.
 
 ## Quick start
 
-NKP **2.18**, **Ultimate** licence, management cluster able to reach `ghcr.io`.
+NKP **2.19**, **Ultimate** licence, management cluster able to reach `ghcr.io`.
 
 ```bash
 nkp create catalog-collection \
   --url oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/collection \
-  --tag 2.18 \
+  --tag 2.19 \
   --workspace kommander-workspace
 ```
 
 Then **Workspace → Applications** in the NKP UI, filter by category (`gitops`, `security`,
 `observability`, ...). Pick one, **Enable**, **Deploy**. Apps with a web UI get a card with an open button
 on the cluster page. Each application page shows the exact values the catalog sets, how to reach
-the tool and what to know on NKP 2.18.
+the tool and what to know on NKP 2.19.
 
 The CLI equivalent:
 
@@ -72,7 +72,6 @@ its own namespace. Web UI is served by the NKP Traefik on the cluster ingress.
 | <img src="docs/icons/jenkins.svg" width="20" height="20" alt=""> | [Jenkins](applications/jenkins) | 5.9.68 | 2.580.1 | one per cluster | `/jenkins/` |  |
 | <img src="docs/icons/backstage.svg" width="20" height="20" alt=""> | [Backstage](applications/backstage) | 2.10.2 | demo image | per project / workspace | `backstage.<domain>` |  |
 | <img src="docs/icons/podinfo.svg" width="20" height="20" alt=""> | [Podinfo](applications/podinfo) | 6.15.0 | 6.15.0 | per project / workspace | `/<instance>/` |  |
-| <img src="docs/icons/headlamp.svg" width="20" height="20" alt=""> | [Headlamp](applications/headlamp) | 0.45.0 | 0.45.0 | one per cluster | `/headlamp/` |  |
 | <img src="docs/icons/portainer.svg" width="20" height="20" alt=""> | [Portainer CE](applications/portainer) | 245.2.0 | 2.45.2 | one per cluster | `portainer.<domain>` |  |
 | <img src="docs/icons/vcluster.svg" width="20" height="20" alt=""> | [vCluster](applications/vcluster) | 0.37.3 | 0.37.3 | per project / workspace |  |  |
 

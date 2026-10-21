@@ -85,7 +85,7 @@ overview: |
     enabled: true
   ```
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - The server starts sealed and uninitialised: run the initialise commands below before use. File storage on one volume is not highly available.
 
   **Links**: [Docs](https://openbao.org/docs/) · [Chart](https://github.com/openbao/openbao-helm) · [Releases](https://github.com/openbao/openbao-helm/releases)

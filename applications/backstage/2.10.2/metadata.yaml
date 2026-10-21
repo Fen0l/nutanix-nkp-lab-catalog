@@ -83,7 +83,7 @@ overview: |
   ```
   `kubectl -n <namespace> port-forward svc/<instance> 7007:7007` opens the portal.
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - The demo image uses an in-memory SQLite database: catalog entities are lost when the pod restarts. Set `postgresql.enabled: true` for anything persistent.
 
   **Links**: [Docs](https://backstage.io/docs/) · [Chart](https://github.com/backstage/charts/tree/main/charts/backstage) · [Default values](https://github.com/backstage/charts/blob/main/charts/backstage/values.yaml) · [Releases](https://github.com/backstage/charts/releases)

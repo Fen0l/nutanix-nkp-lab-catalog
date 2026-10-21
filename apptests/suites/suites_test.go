@@ -75,7 +75,7 @@ func setupCluster() {
 		return
 	}
 	Expect(env.Provision(ctx)).To(Succeed())
-	// Flux pinned to the NKP 2.18 release line (see catalog.DefaultFluxVersion / FLUX_VERSION).
+	// Flux pinned to the NKP 2.19 release line (see catalog.DefaultFluxVersion / FLUX_VERSION).
 	Expect(catalog.InstallFlux(ctx, env, catalog.FluxVersion())).To(Succeed())
 
 	scheme := flux.NewScheme()

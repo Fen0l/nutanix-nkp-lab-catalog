@@ -26,7 +26,7 @@ overview: |
   **At a glance**
   - Chart: `kubescape-operator` 1.40.5, mirrored unchanged from https://kubescape.github.io/helm-charts to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/kubescape-operator`
   - Installs into: namespace `kubescape`, one instance per cluster
-  - Web UI: none of its own; the Headlamp entry ships the Kubescape plugin
+  - Web UI: none of its own
 
   **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
   ```yaml

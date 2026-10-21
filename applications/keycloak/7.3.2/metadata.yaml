@@ -71,7 +71,7 @@ overview: |
   **Access**: `https://<cluster ingress>/keycloak/` (admin console under `/keycloak/admin/`),
   dashboard card on the cluster page.
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - `dev-file` keeps the database on the pod filesystem (no volume): realms and users are lost when the pod is recreated. Point `database.*` at PostgreSQL (CloudNativePG is an NKP platform application) and change `admin` / `admin` before any real use.
 
   **Chart source**: upstream publishes the chart only through an HTTP Helm repository (https://codecentric.github.io/helm-charts); this catalog mirrors the unmodified tarball to OCI.

@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  NKP_VERSION: "2.18.0"
+  NKP_VERSION: "2.19.0"
 
 jobs:
   validate:

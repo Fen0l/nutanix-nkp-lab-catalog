@@ -68,7 +68,7 @@ overview: |
               - path: /
   ```
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - Create the admin user within 5 minutes of the first start; Portainer locks the setup page afterwards (`/timeout.html`). `kubectl -n portainer rollout restart deploy/portainer` reopens it.
 
   **Chart source**: upstream publishes the chart only through an HTTP Helm repository

@@ -100,7 +100,7 @@ overview: |
 
   **Try it**: `kubectl -n <namespace> port-forward svc/<instance>-http 3000:3000` then open http://localhost:3000
 
-  **NKP 2.18 notes**
+  **NKP 2.19 notes**
   - Upstream deploys PostgreSQL HA and a Valkey cluster by default (nine pods, six volumes); use the override above for a one-pod lab instance.
   - Upgrades recreate the single pod (Recreate strategy): expect a short outage on each bump.
 

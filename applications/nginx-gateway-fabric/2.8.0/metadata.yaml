@@ -58,8 +58,8 @@ overview: |
     listeners: [ { name: http, port: 80, protocol: HTTP } ]
   ```
 
-  **NKP 2.18 notes**
-  - NGINX Gateway Fabric 2.7 requires Gateway API v1.6. The NKP 2.18 platform application `gateway-api-crds` installs v1.3.0, so enable the Envoy Gateway entry first (its chart upgrades the CRDs to v1.6.1 in place) or apply the v1.6.1 CRDs yourself.
+  **NKP 2.19 notes**
+  - NGINX Gateway Fabric 2.7 requires Gateway API v1.6. The NKP 2.19 platform application `gateway-api-crds` (chart 1.11.1) still installs v1.3.0, so enable the Envoy Gateway entry first (its chart upgrades the CRDs to v1.6.1 in place) or apply the v1.6.1 CRDs yourself.
 
   **Links**: [Docs](https://docs.nginx.com/nginx-gateway-fabric/) · [Chart](https://github.com/nginx/nginx-gateway-fabric/tree/main/charts/nginx-gateway-fabric) · [Default values](https://github.com/nginx/nginx-gateway-fabric/blob/main/charts/nginx-gateway-fabric/values.yaml) · [Releases](https://github.com/nginx/nginx-gateway-fabric/releases)
 icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+TkdJTlg8L3RpdGxlPjxwYXRoIGQ9Ik0xMiAwTDEuNjA1IDZ2MTJMMTIgMjRsMTAuMzk1LTZWNkwxMiAwem02IDE2LjU5YzAgLjcwNS0uNjQ2IDEuMjktMS41MjkgMS4yOS0uNjMxIDAtMS4zNTEtLjI1NS0xLjgwMS0uODFsLTYtNy4xNDF2Ni42NmMwIC43MjEtLjU3IDEuMjktMS4yNzQgMS4yOUg3LjMyYy0uNzIxIDAtMS4yOS0uNi0xLjI5LTEuMjlWNy40MWMwLS43MDUuNjMtMS4yOSAxLjUtMS4yOS42NDYgMCAxLjM4LjI1NSAxLjgzLjgxbDUuOTcgNy4xNDFWNy40MWMwLS43MjEuNi0xLjI5IDEuMjktMS4yOWguMDc1Yy43MiAwIDEuMjkuNiAxLjI5IDEuMjl2OS4xOEgxOHoiLz48L3N2Zz4=

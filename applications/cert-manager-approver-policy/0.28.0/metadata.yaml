@@ -29,7 +29,7 @@ overview: |
   **At a glance**
   - Chart: `cert-manager-approver-policy` 0.28.0 from `oci://quay.io/jetstack/charts/cert-manager-approver-policy`
   - Installs into: namespace `cert-manager`, one instance per cluster
-  - Web UI: none of its own; the Headlamp entry ships the cert-manager plugin
+  - Web UI: none of its own
   - Requires: `cert-manager` (installed first, enforced by the UI)
 
   **Changes from upstream**: none, upstream chart defaults. To change a value, reference a ConfigMap from the AppDeployment `spec.configOverrides`:
