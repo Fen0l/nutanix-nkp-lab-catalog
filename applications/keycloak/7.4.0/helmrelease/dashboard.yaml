@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-app-dashboard-info
+  namespace: ${releaseNamespace}
+  labels:
+    kommander.d2iq.io/application: ${releaseName}
+data:
+  name: Keycloak
+  dashboardLink: /keycloak/
+  docsLink: https://www.keycloak.org/documentation
+  version: "7.4.0"
+---
