@@ -1,0 +1,79 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Falco
+description: >-
+  Cloud-native runtime security: detects abnormal behaviour and threats in containers and nodes in
+  real time (CNCF graduated). Installs into namespace falco. Web UI on falco.<ingress domain> (asked
+  when enabling).
+type: custom
+allowMultipleInstances: false
+category:
+  - security
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.23.0"
+supportLink: https://falco.org/docs/
+dependencies: []
+upgradesFrom: "9.2.0"
+overview: |
+  ## Falco
+
+  Falco is the CNCF runtime security engine. It runs as a DaemonSet and uses an eBPF probe
+  to watch system calls, raising alerts on suspicious activity (shell in a container,
+  sensitive file reads, privilege escalation).
+
+  **At a glance**
+  - Chart: `falco` 9.2.1 from `oci://ghcr.io/falcosecurity/charts/falco`
+  - Installs into: namespace `falco`, one instance per cluster
+  - Web UI: `https://falco.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page)
+
+  **Changes from upstream**: the values this entry sets on top of the chart defaults. Override them with a `falco-config-overrides` ConfigMap (key `values.yaml`) referenced in the AppDeployment `spec.configOverrides`.
+  ```yaml
+  # --- NKP integration (lab catalog): Falcosidekick (event forwarder) and its web UI on, so Falco
+  # alerts are visible without a log tail. The UI hostname comes from the form at enable time.
+  falcosidekick:
+    enabled: true
+    webui:
+      enabled: true
+  ```
+
+  **Defaults worth knowing**: Upstream chart values (`driver.kind: auto`, the modern eBPF probe on
+  recent kernels) plus the NKP integration block: **Falcosidekick and its web UI enabled**, so
+  alerts are browsable. Installed once per cluster into the `falco` namespace.
+
+  **Access**: when enabling, the form asks for the cluster **ingress domain** (for example
+  `itcs-nkp-mgmt-prod.itcs.local` with a wildcard DNS record, or `<traefik-ip>.nip.io`); the Falcosidekick UI is then served on `https://falco.<domain>/`
+  (login `admin` / `admin`) and a card appears on the cluster page.
+
+  **Ingress with a hostname**: the UI has no sub-path mode, so it is served as `falco.<ingress domain>` and needs a DNS record (wildcard `*.<ingress domain>` to the NKP Traefik address, or `<traefik-ip>.nip.io`). The enable form writes exactly this ConfigMap; to set the host yourself, or from the CLI, create it and reference it in the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: falco-config-overrides
+    namespace: <workspace namespace>
+  data:
+    values.yaml: |
+      falcosidekick:
+        enabled: true
+        webui:
+          enabled: true
+          ingress:
+            enabled: true
+            ingressClassName: kommander-traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.tls: "true"
+            hosts:
+              - host: falco.<ingress domain>
+                paths:
+                  - path: /
+  ```
+
+  **Try it**: `kubectl -n falco logs -l app.kubernetes.io/name=falco -f`, then open a shell
+  in any pod to trigger the `Terminal shell in container` rule.
+
+  **Links**: [Docs](https://falco.org/docs/) · [Chart](https://github.com/falcosecurity/charts/tree/master/charts/falco) · [Default values](https://github.com/falcosecurity/charts/blob/master/charts/falco/values.yaml) · [Releases](https://github.com/falcosecurity/charts/releases)
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHJvbGU9ImltZyIgdmlld0JveD0iNDguOTEgLTEuMDkgNDcyLjE4IDU3Ni42OCI+PGRlZnM+PHN0eWxlPi5jbHMtMntmaWxsOiMwMGI0Yzh9PC9zdHlsZT48L2RlZnM+PHBhdGggZmlsbD0ibm9uZSIgZD0iTTE5Ni42MDQgNDk4LjA5YTg5LjY4MiA4OS42ODIgMCAwIDAtMTMuMDIzLjk2NSA0MC42MzMgNDAuNjMzIDAgMCAwLTExLjkgMy41MzYgMjEuNjE2IDIxLjYxNiAwIDAgMC04LjUyMSA3LjIzNyAyMC4yMSAyMC4yMSAwIDAgMC0zLjIxNSAxMS43MzcgMzEuMzg0IDMxLjM4NCAwIDAgMCAxLjIxOSA5LjE2NSAxNy4wMjIgMTcuMDIyIDAgMCAwIDcuNDYgOS45NnE4LjY4MiA1LjMxIDIzLjQ3NyA1LjMwNyAxOC4wMDQgMCAyNy4zMzMtMS45M3YtNDMuMDgzYTc1LjkwNSA3NS45MDUgMCAwIDAtOS4zMjMtMS45MyA4Ni44OTMgODYuODkzIDAgMCAwLTEzLjUwNy0uOTY1eiIvPjxwYXRoIGQ9Ik00NDkuNzk2IDIwMi44NDVxLTU5LjE1MyA1OC45MjYtMTE4LjM3NSAxMTcuNzg2TDE0Ni4wNzUgNTA1Ljk3N2wtLjQ1NS0uNDU0Yy0xMC42MTQgMTAuNjUtMjEuMTU4IDIxLjM3MS0zMS4zOTMgMzIuMzc3LTUuMzkzIDUuOC03LjM4NCAxMy4xNzMtMS4xNjYgMTkuODcgNi41MDYgNy4wMTIgMTQuMzQ2IDYuNTg4IDIxLjUzIDEuMjY2IDUuMzc2LTMuOTgyIDEwLjA2Mi04Ljk0OCAxNC44MjItMTMuNzA1cTE1MC4yMy0xNTAuMTggMzAwLjE5NC0zMDAuNjMzbDYwLjg5LTEwLjYxM2MtOS45MzctMTAuMDg3LTUxLjI3OC00MC42MjYtNjAuNy0zMS4yNHoiIGNsYXNzPSJjbHMtMiIvPjxwYXRoIGQ9Ik00NzguNzg0IDI5Mi40MzdhMTIuOTIzIDEyLjkyMyAwIDAgMC05LjA4Mi0xMi41NWMtOS42OTktMy41MDYtMTYuMzU3IDIuMTY4LTIyLjU5OSA4LjQwNlEzMjQuODY1IDQxMC40ODEgMjAyLjY2IDUzMi43MDJjLTcuMjEgNy4yMTQtMTQuNjU3IDE1LjgxMi01LjgxNiAyNS4zNDYgOS43NTggMTAuNTI0IDE4LjkgMi45ODggMjYuNjQtNC43NDNxMTIzLjU3LTEyMy40NTIgMjQ3LjA2NS0yNDYuOTgzYzMuOTE1LTMuOTE1IDcuODI1LTcuODYzIDguMjM2LTEzLjg4NXptLTE2Mi45MjMtOS45MTFsMTcuMTQyLTE3LjE0MWMtMS4zOTEtNC4zMjYtNC45MDgtOC40MTQtOC42MTEtMTIuMTJRMjA2LjgyNCAxMzUuNjMyIDg5LjE2OSAxOC4wODZjLTQuMzg3LTQuMzg0LTkuMDc1LTguMzQxLTE1Ljg3LTguMDczLTUuMzI5LjI3NS05LjU5NyAyLjU1My0xMS42MiA3LjU1My0zLjU3NiA4LjgzNC45OTUgMTUuMjk4IDYuODkgMjEuMTk1cTExNy41ODUgMTE3LjYxNiAyMzUuMTg0IDIzNS4yMTVjMy43MDcgMy43MDYgNy43OTYgNy4xOCAxMi4xMDggOC41NXptMTU0LjEzMSAxMDguNTA2YzcuMjU3LTcuMzQzIDEzLjctMTYuMTIzIDMuOTE4LTI1LjM2LTguNzgyLTguMjkzLTE3LjE3LTIuNTEtMjQuMDcyIDQuMzU0LTMxLjMzNCAzMS4xNTctNjIuNDggNjIuNTA0LTkzLjgxOSA5My42NTUtMTAuOTYgMTAuODkzLTEwLjQ1NCAyMS4wNTcuNDAxIDMxLjcyMSAxOC4zODUgMTguMDY3IDM2Ljc0NCAzNi4xNzQgNTQuNTg1IDU0Ljc3MSAxMC4wMDQgMTAuNDI4IDIwLjkzIDE2Ljk1IDM1LjA0MiAxNC4xOTQgMy4yNTkuMjEgNS43MzcuNjkxIDguMTUuNDY2IDEwLjMwMy0uOTU3IDIzLjMwNy0uMjgxIDIzLjYzNC0xNC40NzguMzM1LTE0LjY0NC0xMi4zMzItMTQuNzA4LTIyLjk0My0xNC4zMTItMTAuNzc3LjQwMi0xOC42ODQtNC4wMzItMjUuODQ1LTExLjU2NS0xMC45OTEtMTEuNTYxLTIxLjk5LTIzLjE5LTMzLjg3LTMzLjgwOC0xMC41MTMtOS40LTkuMDE4LTE2LjI5Mi41NS0yNS40OTcgMjUuMjA0LTI0LjI1IDQ5LjY3Ny00OS4yNjEgNzQuMjctNzQuMTR6bS0yMDkuMzM3LTc1Ljk2N2MzLjgxOCAzLjgwMiA4LjM5NCA3LjY4NyAxMy4zNDcgOS4zMjFsMTcuMDYzLTE3LjA2M2MtMi4xNjMtNi4xODgtNy4zMTYtMTAuMzItMTEuNzg0LTE0Ljc5OHEtNzIuMDYyLTcyLjIyNi0xNDQuMjU1LTE0NC4zMmMtOS45NjYtOS45Ni0xOS44NzMtMTkuOTkzLTMwLjE1LTI5LjYzLTYuMDQtNS42NjctMTMuMjEzLTcuMTI0LTE5LjY1Mi0uNzQyLTYuMTMgNi4wNzMtNS42OSAxMy4yMi0uODU5IDIwLjAyNGE2Ni4xMjIgNjYuMTIyIDAgMCAwIDcuMjIzIDguMzAzcTg0LjQ2IDg0LjUyNiAxNjkuMDY3IDE2OC45MDV6bS02NC4wMDkgMjAuNTE4YzkuMSA5LjA3NiAxOC4xNTMgMTguMjE0IDI3LjU4NSAyNi45MzVhMTcuNjczIDE3LjY3MyAwIDAgMCA3LjQwOCA0LjIzM2wxNy44NS0xNy44NWMtMS4xNzItNC42MDEtNC4yMjYtOC4yNDItNy42My0xMS42NXEtNTQuNDk1LTU0LjU5NC0xMDkuMTEtMTA5LjA2NmEzMy4zMjEgMzMuMzIxIDAgMCAwLTEwLjQyNS03LjI2M2MtNS45Ny0yLjQ0OS0xMi4xMjYtMi4wNTQtMTYuODcyIDMuMTczLTQuNzkzIDUuMjc5LTQuNzMgMTEuMzUzLTEuMDExIDE2LjkwOGE5Ni4xIDk2LjEgMCAwIDAgMTEuNzIyIDE0LjAyOXE0MC4xMTMgNDAuNDAyIDgwLjQ4MyA4MC41NTF6IiBjbGFzcz0iY2xzLTIiLz48L3N2Zz4=
