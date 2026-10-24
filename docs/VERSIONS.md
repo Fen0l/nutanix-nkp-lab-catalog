@@ -1,12 +1,12 @@
 # Upstream version report
 
-Generated 2026-10-23 11:13 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-10-24 10:31 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
 | Application | Catalog | Upstream chart | Upstream app | Status | Source |
 |---|---|---|---|---|---|
-| argo-cd | 10.10.5 | 10.10.5 | v3.5.5 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
+| argo-cd | 10.10.5 | 10.11.1 | v3.5.6 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
 | argo-events | 2.4.27 | 2.4.27 | v1.9.11 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-events` |
 | argo-rollouts | 2.43.8 | 2.43.8 | v1.10.1 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-rollouts` |
 | argo-workflows | 2.0.13 | 2.0.14 | v4.1.6 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-workflows` |
@@ -51,4 +51,4 @@ the daily workflow opens one pull request per outdated application.
 | vcluster | 0.37.3 | 0.37.4 | 0.37.4 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
 | victoria-logs | 0.13.10 | 0.13.10 | v1.53.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**10 application(s) outdated.**
+**11 application(s) outdated.**
