@@ -1,0 +1,79 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Portainer CE
+description: >-
+  Container management UI for Kubernetes: namespaces, workloads, Helm, registries and users for teams
+  who prefer a GUI. Installs into namespace portainer. Web UI on portainer.<ingress domain> (asked
+  when enabling).
+type: custom
+allowMultipleInstances: false
+category:
+  - developer-tools
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.25.0"
+supportLink: https://docs.portainer.io/
+dependencies: []
+upgradesFrom: "245.2.0"
+overview: |
+  ## Portainer CE
+
+  Portainer is a popular management UI for Kubernetes and Docker: browse and create workloads,
+  services, volumes and Helm releases, manage registries and RBAC for teams that prefer a GUI
+  over kubectl. The Community Edition is free.
+
+  **At a glance**
+  - Chart: `portainer` 245.3.0, mirrored unchanged from https://portainer.github.io/k8s to `oci://ghcr.io/fen0l/nutanix-nkp-lab-catalog/charts/portainer`
+  - Installs into: namespace `portainer`, one instance per cluster
+  - Web UI: `https://portainer.<ingress domain>/` (domain asked when enabling; dashboard card on the cluster page)
+
+  **Changes from upstream**: the values this entry sets on top of the chart defaults. Override them with a `portainer-config-overrides` ConfigMap (key `values.yaml`) referenced in the AppDeployment `spec.configOverrides`.
+  ```yaml
+  # --- NKP integration (lab catalog): reach Portainer through the NKP ingress (UI hostname
+  # from the form) instead of the upstream NodePorts.
+  service:
+    type: ClusterIP
+  ```
+
+  **Defaults worth knowing**: Upstream chart values with `service.type: ClusterIP` (upstream opens
+  NodePorts 30777/30779) so it is reached through the NKP ingress. Installed once per cluster
+  into `portainer`, with a persistent volume.
+
+  **Access**: when enabling, the form asks for the cluster **ingress domain** (for example
+  `itcs-nkp-mgmt-prod.itcs.local` with a wildcard DNS record, or `<traefik-ip>.nip.io`); Portainer is then served on `https://portainer.<domain>/` and a
+  card appears on the cluster page. Create the admin user within 5 minutes of the first start
+  (Portainer locks the setup page afterwards; restart the pod to reopen it).
+
+  **Ingress with a hostname**: the UI has no sub-path mode, so it is served as `portainer.<ingress domain>` and needs a DNS record (wildcard `*.<ingress domain>` to the NKP Traefik address, or `<traefik-ip>.nip.io`). The enable form writes exactly this ConfigMap; to set the host yourself, or from the CLI, create it and reference it in the AppDeployment `spec.configOverrides`:
+  ```yaml
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: portainer-config-overrides
+    namespace: <workspace namespace>
+  data:
+    values.yaml: |
+      service:
+        type: ClusterIP
+      ingress:
+        enabled: true
+        ingressClassName: kommander-traefik
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+        hosts:
+          - host: portainer.<ingress domain>
+            paths:
+              - path: /
+  ```
+
+  **NKP 2.18 notes**
+  - Create the admin user within 5 minutes of the first start; Portainer locks the setup page afterwards (`/timeout.html`). `kubectl -n portainer rollout restart deploy/portainer` reopens it.
+
+  **Chart source**: upstream publishes the chart only through an HTTP Helm repository
+  (https://portainer.github.io/k8s); this catalog mirrors the unmodified tarball to OCI.
+
+  **Links**: [Docs](https://docs.portainer.io/) · [Chart](https://github.com/portainer/k8s/tree/master/charts/portainer) · [Default values](https://github.com/portainer/k8s/blob/master/charts/portainer/values.yaml) · [Releases](https://github.com/portainer/k8s/releases)
+icon: PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+UG9ydGFpbmVyPC90aXRsZT48cGF0aCBkPSJNMTIuNTA0IDB2MS4wMjNsLS4wMS0uMDE1LTYuMTA2IDMuNTI2SDMuNDE3di43NTFoNS4zNTl2My42MzhoMS45NDJWNS4yODRoMS43ODZ2MTAuNDE2Yy4wMjcgMCAuNTQtLjAxLjc1MS4wOTFWNS4yODVoLjUzMXYxMC42MDhjLjI5My4xNDcuNTUuMzEyLjc1MS41NFY1LjI4Nmg2LjA0NnYtLjc1aC0xLjI2N2wtNi4wNjEtMy41VjB6bTAgMS44N3YyLjY2NEg3Ljg4OXptLjc1MS4wMzFsNC41NiAyLjYzM2gtNC41NnpNOS4xNDIgNS4yODVoMS4yMXYxLjY4NmgtMS4yMXptLTQuNzM2IDIuNzN2MS45NTFoMS45NDJ2LTEuOTV6bTIuMTkgMHYxLjk1MWgxLjk0MXYtMS45NXptLTIuMTkgMi4xNzF2MS45NTFoMS45NDJ2LTEuOTV6bTIuMTkgMHYxLjk1MWgxLjk0MXYtMS45NXptMi4xOCAwdjEuOTUxaDEuOTQydi0xLjk1ek00LjM2IDEyLjQzYTMuNzMgMy43MyAwIDAwLS40OTQgMS44NTFjMCAxLjIyNy42MDQgMi4zMDggMS41MiAyLjk4Ni4yMzktLjA2NC40NzctLjEuNzI0LS4xMS4xIDAgLjE2NS4wMS4yNjYuMDE5LjI4NC0xLjE5MSAxLjM4My0xLjk4OCAyLjY2NS0xLjk4OC43MjQgMCAxLjQzOC4yMDEgMS45MjQuNjY4LjIyOS0uNDc2LjMwMi0xLjAwNy4zMDItMS41NzUgMC0uNjUtLjE2NS0xLjI5Mi0uNDk0LTEuODV6bTQuODI4IDMuMTZjLTEuMjEgMC0yLjIyNi44NDQtMi40OTIgMS45N2EuOTIyLjkyMiAwIDAwLS4yNzUtLjAwOSAyLjU1OSAyLjU1OSAwIDAwLTIuNTY0IDIuNTU2IDIuNTY1IDIuNTY1IDAgMDAzLjA5NiAyLjVBMi41NzkgMi41NzkgMCAwMDkuMjMzIDI0Yy44NjIgMCAxLjYyMi0uNDMgMi4wOS0xLjA4MWEyLjU1NyAyLjU1NyAwIDAwNC4xODYtMS45N2MwLS41NjctLjE5My0xLjA5OS0uNTA0LTEuNTJhMi41NTcgMi41NTcgMCAwMC0zLjg2Ni0yLjk0IDIuNTc0IDIuNTc0IDAgMDAtMS45NTEtLjg5OHoiLz48L3N2Zz4=
