@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-app-dashboard-info
+  namespace: ${releaseNamespace}
+  labels:
+    kommander.d2iq.io/application: ${releaseName}
+data:
+  name: Jenkins
+  dashboardLink: /jenkins/
+  docsLink: https://www.jenkins.io/doc/
+  version: "5.9.73"
+---
