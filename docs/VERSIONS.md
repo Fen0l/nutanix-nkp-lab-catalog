@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-10-24 10:31 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-10-25 10:57 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -38,10 +38,10 @@ the daily workflow opens one pull request per outdated application.
 | openbao | 0.30.4 | 0.30.4 | v2.7.1 | up-to-date | `oci://ghcr.io/openbao/charts/openbao` |
 | opentelemetry-collector | 0.176.0 | 0.177.0 | 0.163.2 | outdated :arrow_up: | `oci://ghcr.io/open-telemetry/opentelemetry-helm-charts/opentelemetry-collector` |
 | podinfo | 6.15.0 | 6.15.0 | 6.15.0 | up-to-date | `oci://ghcr.io/stefanprodan/charts/podinfo` |
-| policy-reporter | 3.11.1 | 3.11.1 | 3.11.1 | up-to-date | `oci://ghcr.io/kyverno/charts/policy-reporter` |
+| policy-reporter | 3.11.1 | 3.11.2 | 3.11.2 | outdated :arrow_up: | `oci://ghcr.io/kyverno/charts/policy-reporter` |
 | portainer | 245.2.0 | 245.3.0 | ce-latest-ee-2.45.3 | outdated :arrow_up: | `https://portainer.github.io/k8s (portainer, mirrored)` |
 | redis-operator | 0.27.0 | 0.27.0 | 0.27.0 | up-to-date | `https://ot-container-kit.github.io/helm-charts (redis-operator, mirrored)` |
-| reflector | 10.0.65 | 10.0.65 | 10.0.65 | up-to-date | `oci://ghcr.io/emberstack/helm-charts/reflector` |
+| reflector | 10.0.65 | 10.0.67 | 10.0.67 | outdated :arrow_up: | `oci://ghcr.io/emberstack/helm-charts/reflector` |
 | sealed-secrets | 2.20.0 | 2.20.0 | 0.40.0 | up-to-date | `https://bitnami.github.io/sealed-secrets (sealed-secrets, mirrored)` |
 | strimzi-kafka-operator | 1.3.0 | 1.3.0 | 1.3.0 | up-to-date | `oci://quay.io/strimzi-helm/strimzi-kafka-operator` |
 | tempo | 1.24.4 | 1.24.4 | 2.9.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/tempo` |
@@ -51,4 +51,4 @@ the daily workflow opens one pull request per outdated application.
 | vcluster | 0.37.3 | 0.37.4 | 0.37.4 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
 | victoria-logs | 0.13.10 | 0.13.10 | v1.53.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**11 application(s) outdated.**
+**13 application(s) outdated.**
