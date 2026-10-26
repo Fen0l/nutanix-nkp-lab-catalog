@@ -1,0 +1,51 @@
+schema: catalog.nkp.nutanix.com/v1/application-user-inputs
+# Declarative input form shown by the NKP UI when enabling the application (NKP 2.18+).
+# portainer's web UI needs its own hostname (no sub-path support upstream). The form asks for the
+# cluster's ingress domain and serves the UI at portainer.<domain> on the NKP Traefik, rendering the chart
+# overrides and the NKP dashboard card.
+groups:
+  - name: exposure
+    label: Web UI
+    description: >-
+      Expose the Portainer on the cluster's NKP ingress (Traefik) as portainer.<ingress domain>.
+      Use the cluster's ingress domain (for example nkp.example.com) with a wildcard DNS
+      record *.<domain> pointing at the Traefik address, or <traefik-ip>.nip.io when no DNS is available.
+    collapse: false
+    fields:
+      - name: ingressDomain
+        label: Ingress domain
+        type: string
+        description: Cluster ingress domain; the UI is served at portainer.<domain> (needs *.<domain> -> Traefik).
+        required: true
+        default: ""
+resources:
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: portainer-config-overrides
+      data:
+        values.yaml: |
+          service:
+            type: ClusterIP
+          ingress:
+            enabled: true
+            ingressClassName: kommander-traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.tls: "true"
+            hosts:
+              - host: portainer.{{ ingressDomain }}
+                paths:
+                  - path: /
+  - template:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: portainer-app-dashboard-info
+        labels:
+          kommander.d2iq.io/application: portainer
+      data:
+        name: Portainer
+        dashboardLink: https://portainer.{{ ingressDomain }}/
+        docsLink: https://docs.portainer.io/
+        version: "245.3.0"
