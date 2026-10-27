@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # Both values are mandatory in the upstream chart (it refuses to render without them).
+    mode: deployment
+    image:
+      repository: otel/opentelemetry-collector-k8s
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
