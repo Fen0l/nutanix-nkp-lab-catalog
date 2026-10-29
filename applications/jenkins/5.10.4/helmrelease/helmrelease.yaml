@@ -1,0 +1,46 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: ${releaseName}-chart
+  namespace: ${releaseNamespace}
+spec:
+  interval: 6h0m0s
+  ref:
+    tag: 5.10.4
+  url: oci://ghcr.io/jenkinsci/helm-charts/jenkins
+  # Pull only the chart layer; some registries attach provenance/signature layers.
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  # Literal name: Kommander's override patch targets this name (patches run before
+  # variable substitution) and renames it to the AppDeployment name for extra instances.
+  name: jenkins
+  namespace: ${releaseNamespace}
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: ${releaseName}-chart
+    namespace: ${releaseNamespace}
+  install:
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: 30
+  interval: 15s
+  # Image-heavy chart: 15 min instead of Helm's 5 min default, so a cold image cache or a
+  # DaemonSet rollout across many nodes does not fail the install and trigger remediation loops.
+  timeout: 15m
+  releaseName: jenkins
+  targetNamespace: jenkins
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 30
+  valuesFrom:
+  - kind: ConfigMap
+    name: ${releaseName}-config-defaults
+---
