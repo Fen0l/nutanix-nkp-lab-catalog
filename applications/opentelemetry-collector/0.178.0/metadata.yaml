@@ -1,0 +1,60 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: OpenTelemetry Collector
+description: >-
+  Vendor-neutral pipeline to receive, process and export traces, metrics and logs. Deployed
+  standalone, no operator required. One instance per AppDeployment, each in its own namespace. No web
+  UI.
+type: custom
+allowMultipleInstances: true
+category:
+  - observability
+licensing:
+  - Pro
+  - Ultimate
+scope:
+  - project
+  - workspace
+nkpVersionSupport: ">=2.18.0"
+k8sVersionSupport: ">=1.23.0"
+supportLink: https://opentelemetry.io/docs/platforms/kubernetes/helm/collector/
+dependencies: []
+upgradesFrom: "0.177.0"
+overview: |
+  ## OpenTelemetry Collector
+
+  The OpenTelemetry Collector receives telemetry (OTLP, Prometheus, Jaeger, Zipkin...),
+  processes it and exports it to any backend. This entry deploys the collector directly with
+  the upstream Helm chart; the OpenTelemetry **Operator** is available separately in the
+  Nutanix product catalog.
+
+  **At a glance**
+  - Chart: `opentelemetry-collector` 0.178.0 from `oci://ghcr.io/open-telemetry/opentelemetry-helm-charts/opentelemetry-collector`
+  - Installs into: one instance per AppDeployment, each in its own namespace
+  - Web UI: none; export to Tempo or VictoriaLogs from this catalog
+
+  **Changes from upstream**: the values this entry sets on top of the chart defaults. Override them with a `opentelemetry-collector-config-overrides` ConfigMap (key `values.yaml`) referenced in the AppDeployment `spec.configOverrides`.
+  ```yaml
+  # Both values are mandatory in the upstream chart (it refuses to render without them).
+  mode: deployment
+  image:
+    repository: otel/opentelemetry-collector-k8s
+  ```
+
+  **Defaults worth knowing**: Upstream chart values plus the two values the chart requires:
+  `mode: deployment` and `image.repository: otel/opentelemetry-collector-k8s`. The default
+  pipeline receives OTLP on 4317/4318 and exports to the debug exporter.
+
+  **Lab override example** (per-node agent collecting logs and kubelet metrics):
+  ```yaml
+  mode: daemonset
+  presets:
+    logsCollection:
+      enabled: true
+    kubeletMetrics:
+      enabled: true
+    kubernetesAttributes:
+      enabled: true
+  ```
+
+  **Links**: [Docs](https://opentelemetry.io/docs/platforms/kubernetes/helm/collector/) · [Chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) · [Default values](https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/values.yaml) · [Releases](https://github.com/open-telemetry/opentelemetry-helm-charts/releases)
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHJvbGU9ImltZyIgdmlld0JveD0iLTEyLjcwIC0xMi43MCAxMDI0LjQwIDEwMjQuNDAiPjxzdHlsZT5zdmcge2VuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMTAwMCAxMDAwfTwvc3R5bGU+PHBhdGggZmlsbD0iI2Y1YTgwMCIgZD0iTTUyOC43IDU0NS45Yy00MiA0Mi00MiAxMTAuMSAwIDE1Mi4xczExMC4xIDQyIDE1Mi4xIDAgNDItMTEwLjEgMC0xNTIuMS0xMTAuMS00Mi0xNTIuMSAwem0xMTMuNyAxMTMuOGMtMjAuOCAyMC44LTU0LjUgMjAuOC03NS4zIDAtMjAuOC0yMC44LTIwLjgtNTQuNSAwLTc1LjMgMjAuOC0yMC44IDU0LjUtMjAuOCA3NS4zIDAgMjAuOCAyMC43IDIwLjggNTQuNSAwIDc1LjN6bTM2LjYtNjQzbC02NS45IDY1LjljLTEyLjkgMTIuOS0xMi45IDM0LjEgMCA0N2wyNTcuMyAyNTcuM2MxMi45IDEyLjkgMzQuMSAxMi45IDQ3IDBsNjUuOS02NS45YzEyLjktMTIuOSAxMi45LTM0LjEgMC00N0w3MjUuOSAxNi43Yy0xMi45LTEyLjktMzQtMTIuOS00Ni45IDB6TTIxNy4zIDg1OC44YzExLjctMTEuNyAxMS43LTMwLjggMC00Mi41bC0zMy41LTMzLjVjLTExLjctMTEuNy0zMC44LTExLjctNDIuNSAwTDcyLjEgODUybC0uMS4xLTE5LTE5Yy0xMC41LTEwLjUtMjcuNi0xMC41LTM4IDAtMTAuNSAxMC41LTEwLjUgMjcuNiAwIDM4bDExNCAxMTRjMTAuNSAxMC41IDI3LjYgMTAuNSAzOCAwczEwLjUtMjcuNiAwLTM4bC0xOS0xOSAuMS0uMSA2OS4yLTY5LjJ6Ii8+PHBhdGggZmlsbD0iIzQyNWNjNyIgZD0iTTU2NS45IDIwNS45TDQxOS41IDM1Mi4zYy0xMyAxMy0xMyAzNC40IDAgNDcuNGw5MC40IDkwLjRjNjMuOS00NiAxNTMuNS00MC4zIDIxMSAxNy4ybDczLjItNzMuMmMxMy0xMyAxMy0zNC40IDAtNDcuNEw2MTMuMyAyMDUuOWMtMTMtMTMuMS0zNC40LTEzLjEtNDcuNCAwem0tOTQgMzIyLjNsLTUzLjQtNTMuNGMtMTIuNS0xMi41LTMzLTEyLjUtNDUuNSAwTDE4NC43IDY2My4yYy0xMi41IDEyLjUtMTIuNSAzMyAwIDQ1LjVsMTA2LjcgMTA2LjdjMTIuNSAxMi41IDMzIDEyLjUgNDUuNSAwTDQ1OCA2OTQuMWMtMjUuNi01Mi45LTIxLTExNi44IDEzLjktMTY1Ljl6Ii8+PC9zdmc+
