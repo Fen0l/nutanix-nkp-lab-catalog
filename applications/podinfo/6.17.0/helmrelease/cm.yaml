@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): expose the UI on the NKP Traefik ingress at /<instance>
+    # podinfo serves all routes under this prefix itself (no path rewriting needed).
+    prefix: /${releaseName}
+    ingress:
+      enabled: true
+      className: kommander-traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.tls: "true"
+      hosts:
+        - host: ""
+          paths:
+            - path: /${releaseName}
+              pathType: Prefix
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
