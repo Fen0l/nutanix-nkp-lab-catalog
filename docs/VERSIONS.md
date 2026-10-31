@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-10-30 12:22 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-10-31 11:52 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -21,7 +21,7 @@ the daily workflow opens one pull request per outdated application.
 | flagger | 1.45.0 | 1.45.0 | 1.45.0 | up-to-date | `oci://ghcr.io/fluxcd/charts/flagger` |
 | gitea | 12.7.0 | 12.7.0 | 1.27.0 | up-to-date | `oci://docker.gitea.com/charts/gitea` |
 | ingress-nginx | 4.15.1 | 4.15.1 | 1.15.1 | up-to-date | `https://kubernetes.github.io/ingress-nginx (ingress-nginx, mirrored)` |
-| jenkins | 5.9.73 | 5.10.5 | 2.580.2 | outdated :arrow_up: | `oci://ghcr.io/jenkinsci/helm-charts/jenkins` |
+| jenkins | 5.9.73 | 5.10.9 | 2.580.2 | outdated :arrow_up: | `oci://ghcr.io/jenkinsci/helm-charts/jenkins` |
 | k6-operator | 4.7.0 | 4.7.0 | 1.7.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/k6-operator` |
 | kafka-ui | 1.6.5 | 1.6.5 | v1.5.0 | up-to-date | `https://ui.charts.kafbat.io (kafka-ui, mirrored)` |
 | keda-add-ons-http | 0.16.0 | 0.16.0 | 0.16.0 | up-to-date | `https://kedacore.github.io/charts (keda-add-ons-http, mirrored)` |
@@ -44,10 +44,10 @@ the daily workflow opens one pull request per outdated application.
 | sealed-secrets | 2.20.0 | 2.22.0 | 0.41.2 | outdated :arrow_up: | `https://bitnami.github.io/sealed-secrets (sealed-secrets, mirrored)` |
 | strimzi-kafka-operator | 1.3.0 | 1.3.0 | 1.3.0 | up-to-date | `oci://quay.io/strimzi-helm/strimzi-kafka-operator` |
 | tempo | 1.24.4 | 1.24.4 | 2.9.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/tempo` |
-| tetragon | 1.7.1 | 1.7.1 | 1.7.1 | up-to-date | `https://helm.cilium.io (tetragon, mirrored)` |
+| tetragon | 1.7.1 | 1.8.0 | 1.8.0 | outdated :arrow_up: | `https://helm.cilium.io (tetragon, mirrored)` |
 | trivy-operator | 0.32.1 | 0.32.1 | 0.30.1 | up-to-date | `oci://ghcr.io/aquasecurity/helm-charts/trivy-operator` |
 | trust-manager | 0.25.0 | 0.26.0 | v0.26.0 | outdated :arrow_up: | `oci://quay.io/jetstack/charts/trust-manager` |
-| vcluster | 0.37.3 | 0.37.5 | 0.37.5 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
+| vcluster | 0.37.3 | 0.37.6 | 0.37.6 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
 | victoria-logs | 0.13.10 | 0.13.10 | v1.53.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**17 application(s) outdated.**
+**18 application(s) outdated.**
