@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-10-31 11:52 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-01 12:51 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -14,7 +14,7 @@ the daily workflow opens one pull request per outdated application.
 | capsule | 0.15.1 | 0.15.2 | 0.15.2 | outdated :arrow_up: | `oci://ghcr.io/projectcapsule/charts/capsule` |
 | cert-manager-approver-policy | 0.28.0 | 0.29.0 | v0.29.0 | outdated :arrow_up: | `oci://quay.io/jetstack/charts/cert-manager-approver-policy` |
 | crossplane | 2.4.2 | 2.4.3 | 2.4.3 | outdated :arrow_up: | `https://charts.crossplane.io/stable (crossplane, mirrored)` |
-| dapr | 1.18.7 | 1.19.0 | 1.19.0 | outdated :arrow_up: | `https://dapr.github.io/helm-charts (dapr, mirrored)` |
+| dapr | 1.18.7 | 1.19.1 | 1.19.1 | outdated :arrow_up: | `https://dapr.github.io/helm-charts (dapr, mirrored)` |
 | descheduler | 0.37.0 | 0.37.0 | 0.37.0 | up-to-date | `https://kubernetes-sigs.github.io/descheduler (descheduler, mirrored)` |
 | envoy-gateway | 1.9.2 | 1.9.3 | v1.9.3 | outdated :arrow_up: | `oci://docker.io/envoyproxy/gateway-helm` |
 | falco | 9.2.1 | 9.2.2 | 0.45.2 | outdated :arrow_up: | `oci://ghcr.io/falcosecurity/charts/falco` |
