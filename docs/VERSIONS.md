@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-11-01 12:51 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-02 15:03 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -48,6 +48,6 @@ the daily workflow opens one pull request per outdated application.
 | trivy-operator | 0.32.1 | 0.32.1 | 0.30.1 | up-to-date | `oci://ghcr.io/aquasecurity/helm-charts/trivy-operator` |
 | trust-manager | 0.25.0 | 0.26.0 | v0.26.0 | outdated :arrow_up: | `oci://quay.io/jetstack/charts/trust-manager` |
 | vcluster | 0.37.3 | 0.37.6 | 0.37.6 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
-| victoria-logs | 0.13.10 | 0.13.10 | v1.53.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
+| victoria-logs | 0.13.10 | 0.13.11 | v1.53.0 | outdated :arrow_up: | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**18 application(s) outdated.**
+**19 application(s) outdated.**
