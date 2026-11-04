@@ -1,0 +1,18 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): served natively under /jenkins on the NKP Traefik
+    controller:
+      jenkinsUriPrefix: /jenkins
+      ingress:
+        enabled: true
+        ingressClassName: kommander-traefik
+        path: /jenkins
+        pathType: Prefix
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
