@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): the name the kubeseal CLI looks for by default
+    # (--controller-name sealed-secrets-controller in kube-system), so no flags are needed.
+    fullnameOverride: sealed-secrets-controller
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
