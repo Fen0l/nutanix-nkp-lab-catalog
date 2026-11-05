@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    server:
+      readinessProbe:
+        # Upstream readiness uses `bao status`, which fails while the server is sealed or
+        # uninitialised, so a fresh install never reports Ready and the Helm install times out.
+        # The HTTP health endpoint with sealed/uninit treated as 204 keeps the pod Ready so the
+        # operator can initialise and unseal after deployment. Documented upstream knob.
+        path: /v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
