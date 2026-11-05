@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): Falcosidekick (event forwarder) and its web UI on, so Falco
+    # alerts are visible without a log tail. The UI hostname comes from the form at enable time.
+    falcosidekick:
+      enabled: true
+      webui:
+        enabled: true
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
