@@ -21,7 +21,7 @@ without. Everything is tested on NKP 2.19 and on kind before it is published.
 
 ## Quick start
 
-NKP **2.19**, **Ultimate** licence, management cluster able to reach `ghcr.io`.
+NKP **2.19** or **2.18** (use `--tag 2.18`), **Ultimate** licence, management cluster able to reach `ghcr.io`.
 
 ```bash
 nkp create catalog-collection \

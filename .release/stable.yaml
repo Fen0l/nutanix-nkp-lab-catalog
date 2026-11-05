@@ -6,3 +6,9 @@ releases:
       org.opencontainers.image.source: https://github.com/Fen0l/nutanix-nkp-lab-catalog
     constraints:
       nkpVersion: "2.19"
+  - tagName: "2.18"
+    fileName: nutanix-nkp-lab-catalog-2.18.tar
+    collectionAnnotations:
+      org.opencontainers.image.source: https://github.com/Fen0l/nutanix-nkp-lab-catalog
+    constraints:
+      nkpVersion: "2.18"
