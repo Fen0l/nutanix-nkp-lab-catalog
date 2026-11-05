@@ -8,6 +8,9 @@ updates:
       go_modules:
         patterns: ["*"]
     ignore:
-      # upstream mesosphere/kommander-applications apptests still needs docker/cli v28 (authConfig.Email)
+      # upstream mesosphere/kommander-applications apptests still needs docker/cli v28 (authConfig.Email);
+      # flux2 >= v2.8.6 requires docker/cli v29, so the flux2 module stays on the 2.7 line
       - dependency-name: "github.com/docker/cli"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "github.com/fluxcd/flux2/v2"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
