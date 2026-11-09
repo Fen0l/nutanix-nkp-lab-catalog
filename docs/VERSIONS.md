@@ -1,14 +1,14 @@
 # Upstream version report
 
-Generated 2026-11-08 12:56 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-09 15:32 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
 | Application | Catalog | Upstream chart | Upstream app | Status | Source |
 |---|---|---|---|---|---|
-| argo-cd | 10.12.0 | 10.15.0 | v3.6.1 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
-| argo-events | 2.4.27 | 2.4.27 | v1.9.11 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-events` |
-| argo-rollouts | 2.43.8 | 2.43.10 | v1.10.2 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-rollouts` |
+| argo-cd | 10.12.0 | 10.17.1 | v3.6.1 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
+| argo-events | 2.4.27 | 2.4.28 | v1.9.11 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-events` |
+| argo-rollouts | 2.43.8 | 2.43.12 | v1.10.2 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-rollouts` |
 | argo-workflows | 2.0.16 | 2.0.18 | v4.1.6 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-workflows` |
 | backstage | 2.10.2 | 2.10.2 | - | up-to-date | `oci://ghcr.io/backstage/charts/backstage` |
 | capsule | 0.15.2 | 0.15.2 | 0.15.2 | up-to-date | `oci://ghcr.io/projectcapsule/charts/capsule` |
@@ -48,6 +48,6 @@ the daily workflow opens one pull request per outdated application.
 | trivy-operator | 0.32.1 | 0.32.1 | 0.30.1 | up-to-date | `oci://ghcr.io/aquasecurity/helm-charts/trivy-operator` |
 | trust-manager | 0.26.0 | 0.26.0 | v0.26.0 | up-to-date | `oci://quay.io/jetstack/charts/trust-manager` |
 | vcluster | 0.37.3 | 0.37.6 | 0.37.6 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
-| victoria-logs | 0.13.11 | 0.13.11 | v1.53.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
+| victoria-logs | 0.13.11 | 0.13.12 | v1.53.0 | outdated :arrow_up: | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**11 application(s) outdated.**
+**13 application(s) outdated.**
