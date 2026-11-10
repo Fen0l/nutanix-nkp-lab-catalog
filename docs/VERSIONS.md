@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-11-09 15:32 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-10 14:31 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -40,14 +40,14 @@ the daily workflow opens one pull request per outdated application.
 | policy-reporter | 3.11.2 | 3.11.2 | 3.11.2 | up-to-date | `oci://ghcr.io/kyverno/charts/policy-reporter` |
 | portainer | 245.3.0 | 245.3.0 | ce-latest-ee-2.45.3 | up-to-date | `https://portainer.github.io/k8s (portainer, mirrored)` |
 | redis-operator | 0.27.0 | 0.27.0 | 0.27.0 | up-to-date | `https://ot-container-kit.github.io/helm-charts (redis-operator, mirrored)` |
-| reflector | 10.0.72 | 10.0.74 | 10.0.74 | outdated :arrow_up: | `oci://ghcr.io/emberstack/helm-charts/reflector` |
+| reflector | 10.0.72 | 10.0.75 | 10.0.75 | outdated :arrow_up: | `oci://ghcr.io/emberstack/helm-charts/reflector` |
 | sealed-secrets | 2.22.0 | 2.22.0 | 0.41.2 | up-to-date | `https://bitnami.github.io/sealed-secrets (sealed-secrets, mirrored)` |
 | strimzi-kafka-operator | 1.3.1 | 1.3.1 | 1.3.1 | up-to-date | `oci://quay.io/strimzi-helm/strimzi-kafka-operator` |
 | tempo | 1.24.4 | 1.24.4 | 2.9.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/tempo` |
 | tetragon | 1.8.0 | 1.8.0 | 1.8.0 | up-to-date | `https://helm.cilium.io (tetragon, mirrored)` |
 | trivy-operator | 0.32.1 | 0.32.1 | 0.30.1 | up-to-date | `oci://ghcr.io/aquasecurity/helm-charts/trivy-operator` |
 | trust-manager | 0.26.0 | 0.26.0 | v0.26.0 | up-to-date | `oci://quay.io/jetstack/charts/trust-manager` |
-| vcluster | 0.37.3 | 0.37.6 | 0.37.6 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
+| vcluster | 0.37.3 | 0.37.7 | 0.37.7 | outdated :arrow_up: | `https://charts.loft.sh (vcluster, mirrored)` |
 | victoria-logs | 0.13.11 | 0.13.12 | v1.53.0 | outdated :arrow_up: | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
 **13 application(s) outdated.**
