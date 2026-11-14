@@ -1,0 +1,7 @@
+# Created here (not only by the HelmRelease) so the Traefik middleware below can be
+# applied in the same namespace as the chart's Ingress in one reconciliation.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo
+---
