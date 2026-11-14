@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): reach Portainer through the NKP ingress (UI hostname
+    # from the form) instead of the upstream NodePorts.
+    service:
+      type: ClusterIP
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
