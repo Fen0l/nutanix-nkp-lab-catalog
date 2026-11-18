@@ -1,0 +1,25 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): serve the UI/API on the NKP Traefik ingress at /argo-cd
+    global:
+      domain: ""            # host-less ingress rule: reachable on the cluster ingress IP/name
+    configs:
+      params:
+        server.insecure: true        # TLS terminates at Traefik
+        server.rootpath: /argo-cd
+        server.basehref: /argo-cd
+    server:
+      ingress:
+        enabled: true
+        ingressClassName: kommander-traefik
+        hostname: ""
+        path: /argo-cd
+        pathType: Prefix
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
