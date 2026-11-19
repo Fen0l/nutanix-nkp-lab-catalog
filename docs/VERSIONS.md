@@ -1,12 +1,12 @@
 # Upstream version report
 
-Generated 2026-11-18 15:19 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-19 15:26 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
 | Application | Catalog | Upstream chart | Upstream app | Status | Source |
 |---|---|---|---|---|---|
-| argo-cd | 10.18.0 | 10.18.1 | v3.6.1 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
+| argo-cd | 10.18.0 | 10.18.2 | v3.6.2 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
 | argo-events | 2.4.28 | 2.4.28 | v1.9.11 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-events` |
 | argo-rollouts | 2.43.12 | 2.43.12 | v1.10.2 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-rollouts` |
 | argo-workflows | 2.0.18 | 2.0.18 | v4.1.6 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-workflows` |
@@ -14,7 +14,7 @@ the daily workflow opens one pull request per outdated application.
 | capsule | 0.15.2 | 0.15.2 | 0.15.2 | up-to-date | `oci://ghcr.io/projectcapsule/charts/capsule` |
 | cert-manager-approver-policy | 0.29.0 | 0.29.0 | v0.29.0 | up-to-date | `oci://quay.io/jetstack/charts/cert-manager-approver-policy` |
 | crossplane | 2.4.3 | 2.4.3 | 2.4.3 | up-to-date | `https://charts.crossplane.io/stable (crossplane, mirrored)` |
-| dapr | 1.19.1 | 1.19.1 | 1.19.1 | up-to-date | `https://dapr.github.io/helm-charts (dapr, mirrored)` |
+| dapr | 1.19.1 | 1.19.2 | 1.19.2 | outdated :arrow_up: | `https://dapr.github.io/helm-charts (dapr, mirrored)` |
 | descheduler | 0.37.0 | 0.37.0 | 0.37.0 | up-to-date | `https://kubernetes-sigs.github.io/descheduler (descheduler, mirrored)` |
 | envoy-gateway | 1.10.0 | 1.10.0 | v1.10.0 | up-to-date | `oci://docker.io/envoyproxy/gateway-helm` |
 | falco | 9.2.2 | 9.2.2 | 0.45.2 | up-to-date | `oci://ghcr.io/falcosecurity/charts/falco` |
@@ -35,10 +35,10 @@ the daily workflow opens one pull request per outdated application.
 | mongodb-community-operator | 0.13.0 | 0.13.0 | 0.13.0 | up-to-date | `https://mongodb.github.io/helm-charts (community-operator, mirrored)` |
 | nginx-gateway-fabric | 2.8.1 | 2.9.0 | 2.9.0 | outdated :arrow_up: | `oci://ghcr.io/nginx/charts/nginx-gateway-fabric` |
 | openbao | 0.30.7 | 0.30.7 | v2.7.2 | up-to-date | `oci://ghcr.io/openbao/charts/openbao` |
-| opentelemetry-collector | 0.178.3 | 0.179.1 | 0.163.2 | outdated :arrow_up: | `oci://ghcr.io/open-telemetry/opentelemetry-helm-charts/opentelemetry-collector` |
+| opentelemetry-collector | 0.178.3 | 0.180.0 | 0.163.2 | outdated :arrow_up: | `oci://ghcr.io/open-telemetry/opentelemetry-helm-charts/opentelemetry-collector` |
 | podinfo | 6.17.0 | 6.17.0 | 6.17.0 | up-to-date | `oci://ghcr.io/stefanprodan/charts/podinfo` |
 | policy-reporter | 3.11.2 | 3.11.2 | 3.11.2 | up-to-date | `oci://ghcr.io/kyverno/charts/policy-reporter` |
-| portainer | 245.3.1 | 245.3.1 | ce-latest-ee-2.45.3 | up-to-date | `https://portainer.github.io/k8s (portainer, mirrored)` |
+| portainer | 245.3.1 | 245.4.0 | ce-latest-ee-2.45.4 | outdated :arrow_up: | `https://portainer.github.io/k8s (portainer, mirrored)` |
 | redis-operator | 0.27.0 | 0.27.0 | 0.27.0 | up-to-date | `https://ot-container-kit.github.io/helm-charts (redis-operator, mirrored)` |
 | reflector | 10.0.78 | 10.0.79 | 10.0.79 | outdated :arrow_up: | `oci://ghcr.io/emberstack/helm-charts/reflector` |
 | sealed-secrets | 2.22.0 | 2.22.0 | 0.41.2 | up-to-date | `https://bitnami.github.io/sealed-secrets (sealed-secrets, mirrored)` |
@@ -50,4 +50,4 @@ the daily workflow opens one pull request per outdated application.
 | vcluster | 0.38.0 | 0.38.0 | 0.38.0 | up-to-date | `https://charts.loft.sh (vcluster, mirrored)` |
 | victoria-logs | 0.13.13 | 0.13.13 | v1.54.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**6 application(s) outdated.**
+**8 application(s) outdated.**
