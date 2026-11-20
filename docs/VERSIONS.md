@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-11-19 15:26 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-20 15:02 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -23,7 +23,7 @@ the daily workflow opens one pull request per outdated application.
 | ingress-nginx | 4.15.1 | 4.15.1 | 1.15.1 | up-to-date | `https://kubernetes.github.io/ingress-nginx (ingress-nginx, mirrored)` |
 | jenkins | 5.13.3 | 5.13.3 | 2.580.2 | up-to-date | `oci://ghcr.io/jenkinsci/helm-charts/jenkins` |
 | k6-operator | 4.7.0 | 4.7.0 | 1.7.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/k6-operator` |
-| kafka-ui | 1.6.5 | 1.6.5 | v1.5.0 | up-to-date | `https://ui.charts.kafbat.io (kafka-ui, mirrored)` |
+| kafka-ui | 1.6.5 | 1.6.6 | v1.5.1 | outdated :arrow_up: | `https://ui.charts.kafbat.io (kafka-ui, mirrored)` |
 | keda-add-ons-http | 0.16.0 | 0.16.0 | 0.16.0 | up-to-date | `https://kedacore.github.io/charts (keda-add-ons-http, mirrored)` |
 | keda | 2.21.0 | 2.21.1 | 2.21.1 | outdated :arrow_up: | `https://kedacore.github.io/charts (keda, mirrored)` |
 | keycloak | 7.4.0 | 7.4.0 | 26.8.1 | up-to-date | `https://codecentric.github.io/helm-charts (keycloakx, mirrored)` |
@@ -34,13 +34,13 @@ the daily workflow opens one pull request per outdated application.
 | litmus | 3.30.0 | 3.30.0 | 3.30.0 | up-to-date | `oci://ghcr.io/litmuschaos/litmus-helm/litmus` |
 | mongodb-community-operator | 0.13.0 | 0.13.0 | 0.13.0 | up-to-date | `https://mongodb.github.io/helm-charts (community-operator, mirrored)` |
 | nginx-gateway-fabric | 2.8.1 | 2.9.0 | 2.9.0 | outdated :arrow_up: | `oci://ghcr.io/nginx/charts/nginx-gateway-fabric` |
-| openbao | 0.30.7 | 0.30.7 | v2.7.2 | up-to-date | `oci://ghcr.io/openbao/charts/openbao` |
+| openbao | 0.30.7 | 0.30.8 | v2.7.3 | outdated :arrow_up: | `oci://ghcr.io/openbao/charts/openbao` |
 | opentelemetry-collector | 0.178.3 | 0.180.0 | 0.163.2 | outdated :arrow_up: | `oci://ghcr.io/open-telemetry/opentelemetry-helm-charts/opentelemetry-collector` |
 | podinfo | 6.17.0 | 6.17.0 | 6.17.0 | up-to-date | `oci://ghcr.io/stefanprodan/charts/podinfo` |
 | policy-reporter | 3.11.2 | 3.11.2 | 3.11.2 | up-to-date | `oci://ghcr.io/kyverno/charts/policy-reporter` |
 | portainer | 245.3.1 | 245.4.0 | ce-latest-ee-2.45.4 | outdated :arrow_up: | `https://portainer.github.io/k8s (portainer, mirrored)` |
 | redis-operator | 0.27.0 | 0.27.0 | 0.27.0 | up-to-date | `https://ot-container-kit.github.io/helm-charts (redis-operator, mirrored)` |
-| reflector | 10.0.78 | 10.0.79 | 10.0.79 | outdated :arrow_up: | `oci://ghcr.io/emberstack/helm-charts/reflector` |
+| reflector | 10.0.78 | 10.0.80 | 10.0.80 | outdated :arrow_up: | `oci://ghcr.io/emberstack/helm-charts/reflector` |
 | sealed-secrets | 2.22.0 | 2.22.0 | 0.41.2 | up-to-date | `https://bitnami.github.io/sealed-secrets (sealed-secrets, mirrored)` |
 | strimzi-kafka-operator | 1.3.1 | 1.3.1 | 1.3.1 | up-to-date | `oci://quay.io/strimzi-helm/strimzi-kafka-operator` |
 | tempo | 1.24.4 | 1.24.4 | 2.9.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/tempo` |
@@ -50,4 +50,4 @@ the daily workflow opens one pull request per outdated application.
 | vcluster | 0.38.0 | 0.38.0 | 0.38.0 | up-to-date | `https://charts.loft.sh (vcluster, mirrored)` |
 | victoria-logs | 0.13.13 | 0.13.13 | v1.54.0 | up-to-date | `oci://ghcr.io/victoriametrics/helm-charts/victoria-logs-single` |
 
-**8 application(s) outdated.**
+**10 application(s) outdated.**
