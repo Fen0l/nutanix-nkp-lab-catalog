@@ -1,12 +1,12 @@
 # Upstream version report
 
-Generated 2026-11-24 17:10 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-25 16:56 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
 | Application | Catalog | Upstream chart | Upstream app | Status | Source |
 |---|---|---|---|---|---|
-| argo-cd | 10.18.0 | 10.19.0 | v3.6.2 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
+| argo-cd | 10.18.0 | 10.20.0 | v3.6.3 | outdated :arrow_up: | `oci://ghcr.io/argoproj/argo-helm/argo-cd` |
 | argo-events | 2.4.28 | 2.4.28 | v1.9.11 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-events` |
 | argo-rollouts | 2.43.12 | 2.43.12 | v1.10.2 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-rollouts` |
 | argo-workflows | 2.0.18 | 2.0.18 | v4.1.6 | up-to-date | `oci://ghcr.io/argoproj/argo-helm/argo-workflows` |
