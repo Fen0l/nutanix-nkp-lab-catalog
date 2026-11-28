@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    # --- NKP integration (lab catalog): serve the UI on the NKP Traefik ingress at /argo-workflows
+    server:
+      baseHref: /argo-workflows/
+      authModes:
+        - server          # lab: UI uses the server's service account, no token prompt
+      ingress:
+        enabled: true
+        ingressClassName: kommander-traefik
+        paths:
+          - /argo-workflows
+        annotations:
+          traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: argo-argo-workflows-stripprefix@kubernetescrd
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---

@@ -1,0 +1,13 @@
+# Argo Workflows serves its UI and API at the root and relies on the ingress to strip the
+# sub-path while BASE_HREF keeps the browser on /argo-workflows/ (upstream ingress docs).
+# Traefik middlewares must live in the Ingress namespace (no cross-namespace references on NKP).
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: argo-workflows-stripprefix
+  namespace: argo
+spec:
+  stripPrefix:
+    prefixes:
+      - /argo-workflows
+---
