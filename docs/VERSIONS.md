@@ -1,6 +1,6 @@
 # Upstream version report
 
-Generated 2026-11-27 16:20 UTC by `scripts/check-versions.sh --markdown`.
+Generated 2026-11-28 15:13 UTC by `scripts/check-versions.sh --markdown`.
 A new chart version becomes a new `applications/<app>/<version>/` directory (`scripts/bump-app.sh`);
 the daily workflow opens one pull request per outdated application.
 
@@ -21,7 +21,7 @@ the daily workflow opens one pull request per outdated application.
 | flagger | 1.45.0 | 1.45.0 | 1.45.0 | up-to-date | `oci://ghcr.io/fluxcd/charts/flagger` |
 | gitea | 12.7.0 | 12.7.0 | 1.27.0 | up-to-date | `oci://docker.gitea.com/charts/gitea` |
 | ingress-nginx | 4.15.1 | 4.15.1 | 1.15.1 | up-to-date | `https://kubernetes.github.io/ingress-nginx (ingress-nginx, mirrored)` |
-| jenkins | 5.13.3 | 5.13.10 | 2.580.3 | outdated :arrow_up: | `oci://ghcr.io/jenkinsci/helm-charts/jenkins` |
+| jenkins | 5.13.3 | 5.14.1 | 2.580.3 | outdated :arrow_up: | `oci://ghcr.io/jenkinsci/helm-charts/jenkins` |
 | k6-operator | 4.7.0 | 4.7.0 | 1.7.0 | up-to-date | `oci://ghcr.io/grafana/helm-charts/k6-operator` |
 | kafka-ui | 1.6.5 | 1.6.6 | v1.5.1 | outdated :arrow_up: | `https://ui.charts.kafbat.io (kafka-ui, mirrored)` |
 | keda-add-ons-http | 0.16.0 | 0.16.0 | 0.16.0 | up-to-date | `https://kedacore.github.io/charts (keda-add-ons-http, mirrored)` |
